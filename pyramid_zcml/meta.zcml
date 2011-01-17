@@ -1,0 +1,123 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta">
+
+  <meta:directives namespace="http://pylonshq.com/pyramid">
+
+    <meta:directive
+        name="view"
+        schema="pyramid_zcml.IViewDirective"
+        handler="pyramid_zcml.view"
+        />
+
+    <meta:directive
+        name="scan"
+        schema="pyramid_zcml.IScanDirective"
+        handler="pyramid_zcml.scan"
+        />
+
+    <meta:directive
+        name="notfound"
+        schema="pyramid_zcml.ISystemViewDirective"
+        handler="pyramid_zcml.notfound"
+        />
+
+    <meta:directive
+        name="forbidden"
+        schema="pyramid_zcml.ISystemViewDirective"
+        handler="pyramid_zcml.forbidden"
+        />
+
+    <meta:directive
+        name="route"
+        schema="pyramid_zcml.IRouteDirective"
+        handler="pyramid_zcml.route"
+        />
+
+    <meta:directive
+        name="asset"
+        schema="pyramid_zcml.IAssetDirective"
+        handler="pyramid_zcml.asset"
+        />
+
+    <meta:directive
+        name="resource"
+        schema="pyramid_zcml.IAssetDirective"
+        handler="pyramid_zcml.asset"
+        />
+
+    <meta:directive
+        name="static"
+        schema="pyramid_zcml.IStaticDirective"
+        handler="pyramid_zcml.static"
+        />
+
+    <meta:directive
+        name="renderer"
+        schema="pyramid_zcml.IRendererDirective"
+        handler="pyramid_zcml.renderer"
+        />
+
+    <meta:directive
+        name="repozewho1authenticationpolicy"
+        schema="pyramid_zcml.IRepozeWho1AuthenticationPolicyDirective"
+        handler="pyramid_zcml.repozewho1authenticationpolicy"
+        />
+
+    <meta:directive
+        name="remoteuserauthenticationpolicy"
+        schema="pyramid_zcml.IRemoteUserAuthenticationPolicyDirective"
+        handler="pyramid_zcml.remoteuserauthenticationpolicy"
+        />
+
+    <meta:directive
+        name="authtktauthenticationpolicy"
+        schema="pyramid_zcml.IAuthTktAuthenticationPolicyDirective"
+        handler="pyramid_zcml.authtktauthenticationpolicy"
+        />
+
+    <meta:directive
+        name="aclauthorizationpolicy"
+        schema="pyramid_zcml.IACLAuthorizationPolicyDirective"
+        handler="pyramid_zcml.aclauthorizationpolicy"
+        />
+
+    <meta:directive
+        name="translationdir"
+        schema="pyramid_zcml.ITranslationDirDirective"
+        handler="pyramid_zcml.translationdir"
+        />
+
+    <meta:directive
+        name="localenegotiator"
+        schema="pyramid_zcml.ILocaleNegotiatorDirective"
+        handler="pyramid_zcml.localenegotiator"
+        />
+
+    <meta:directive
+        name="adapter"
+        schema="pyramid_zcml.IAdapterDirective"
+        handler="pyramid_zcml.adapter"
+        />
+
+    <meta:directive
+        name="subscriber"
+        schema="pyramid_zcml.ISubscriberDirective"
+        handler="pyramid_zcml.subscriber"
+        />
+
+    <meta:directive
+        name="utility"
+        schema="pyramid_zcml.IUtilityDirective"
+        handler="pyramid_zcml.utility"
+        />
+
+    <meta:directive
+        name="default_permission"
+        schema="pyramid_zcml.IDefaultPermissionDirective"
+        handler="pyramid_zcml.default_permission"
+        />
+
+  </meta:directives>
+
+</configure>
