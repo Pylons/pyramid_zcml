@@ -4,7 +4,8 @@ pyramid_zcml
 Overview
 --------
 
-``pyramid_zcml`` is a package which provides ZCML directives for all built-in Pyramid configuration directives.
+``pyramid_zcml`` is a package which provides :term:`ZCML` directives for all
+built-in Pyramid configurator methods.
 
 Installation
 ------------
@@ -28,24 +29,24 @@ Pyramid project's ``__init__.py``:
    config = Configurator(.....)
    config.include(pyramid_zcml)
 
-At this point, it will be possible to use the
-:func:`pyramid_zcml.load_zcml` function as a method of the configurator,
-ala:
+Do this before trying to load any ZCML.  After this step is taken, it will be
+possible to use the :func:`pyramid_zcml.load_zcml` function as a method of
+the configurator, ala:
 
 .. code-block:: python
    :linenos:
 
    config.load_zcml(....)
 
-More Information
-----------------
+Directives and API
+------------------
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
+   zcml.rst
    api.rst
    glossary.rst
-   zcml.rst
 
 
 Reporting Bugs / Development Versions

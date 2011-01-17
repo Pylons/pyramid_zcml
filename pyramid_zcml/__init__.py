@@ -6,8 +6,6 @@ from zope.configuration.fields import GlobalInterface
 from zope.configuration.fields import GlobalObject
 from zope.configuration.fields import Tokens
 
-from zope.deprecation import deprecated
-
 from zope.interface import Interface
 from zope.interface import implementedBy
 from zope.interface import providedBy
@@ -789,7 +787,7 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
     current configuration state.  The ``spec`` argument is an
     absolute filename, a relative filename, or a :term:`asset
     specification`, defaulting to ``configure.zcml`` (relative to
-    the package of the configurator's caller)."""
+    the package of the method's caller)."""
     package_name, filename = self._split_spec(spec)
     if package_name is None: # absolute filename
         package = self.package

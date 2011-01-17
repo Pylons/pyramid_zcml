@@ -5,3 +5,4 @@
 
 .. automodule:: pyramid_zcml
 
+.. autofunction:: load_zcml(spec='configure.zcml')
