@@ -31,10 +31,11 @@ install_requires=[
     ]
 
 if platform.system() == 'Java':
-    tests_require = install_requires
+    tests_require = install_requires + ['WebTest', 'venusian']
 else:
     tests_require= install_requires + ['Sphinx', 'docutils', 
-                                       'repoze.sphinx.autointerface']
+                                       'repoze.sphinx.autointerface',
+                                       'WebTest', 'venusian']
 
 setup(name='pyramid_zcml',
       version=__version__,

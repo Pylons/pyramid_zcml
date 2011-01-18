@@ -1,0 +1,15 @@
+<configure xmlns="http://pylonshq.com/pyramid">
+
+  <include package="pyramid_zcml" />
+
+  <route
+     view=".views.rdf_view"
+     path="licenses/:license_code/:license_version/rdf"
+     name="rdf" />
+
+  <route
+     view=".views.juri_view"
+     path="licenses/:license_code/:license_version/:jurisdiction"
+     name="juri" />
+
+</configure>
