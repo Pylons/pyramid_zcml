@@ -1401,3 +1401,33 @@ the ZCML ``utility`` directive.  In the below, we assume a
 
 See :ref:`adding_renderer_globals` for more information.
 
+.. index::
+   single: Zope ZCML directives
+   single: getGlobalSiteManager
+   single: getSiteManager
+
+Using Broken ZCML Directives
+----------------------------
+
+Some :term:`Zope` and third-party :term:`ZCML` directives use the
+``zope.component.getGlobalSiteManager`` API to get "the registry" when
+they should actually be calling ``zope.component.getSiteManager``.
+
+``zope.component.getSiteManager`` can be overridden by Pyramid via
+:meth:`pyramid.config.Configurator.hook_zca`, while
+``zope.component.getGlobalSiteManager`` cannot.  Directives that use
+``zope.component.getGlobalSiteManager`` are effectively broken; no ZCML
+directive should be using this function to find a registry to populate.
+
+You cannot use ZCML directives which use
+``zope.component.getGlobalSiteManager`` within a Pyramid application without
+passing the ZCA global registry to the :term:`Configurator` constructor at
+application startup, as per :ref:`using_the_zca_global_registry`.
+
+One alternative exists: fix the ZCML directive to use
+``getSiteManager`` rather than ``getGlobalSiteManager``.  If a
+directive disuses ``getGlobalSiteManager``, the ``hook_zca`` method of
+using a component registry as documented in :ref:`hook_zca` will begin
+to work, allowing you to make use of the ZCML directive without
+also using the ZCA global registry.
+
