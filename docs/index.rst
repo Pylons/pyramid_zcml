@@ -38,6 +38,15 @@ the configurator, ala:
 
    config.load_zcml(....)
 
+Paster Template
+---------------
+
+The ``pyramid_starter_zcml`` Paster template is included with this package.
+You can use it via ``paster create -t pyramid_starter_zcml``.  It creates a
+package skeleton which configures a Pyramid appliction via ZCML.  The
+application performs URL mapping via :term:`traversal` and no persistence
+mechanism.
+
 Usage
 -----
 
