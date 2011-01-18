@@ -38,6 +38,15 @@ the configurator, ala:
 
    config.load_zcml(....)
 
+Usage
+-----
+
+.. toctree::
+   :maxdepth: 2
+
+   narr.rst
+
+
 Directives and API
 ------------------
 

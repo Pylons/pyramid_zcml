@@ -304,3 +304,32 @@ Glossary
      require that the executing user possess the default permission in
      order to successfully execute the associated :term:`view
      callable` See also :ref:`setting_a_default_permission`.
+
+   renderer
+     A serializer that can be referred to via :term:`view
+     configuration` which converts a non-:term:`Response` return
+     values from a :term:`view` into a string (and ultimately a
+     response).  Using a renderer can make writing views that require
+     templating or other serialization less tedious.  See
+     :ref:`views_which_use_a_renderer` for more information.
+
+   renderer factory
+     A factory which creates a :term:`renderer`.  See
+     :ref:`adding_and_overriding_renderers` for more information.
+
+   authentication policy
+     An authentication policy in Pyramid terms is a bit of
+     code which has an API which determines the current
+     :term:`principal` (or principals) associated with a request.
+
+   ZCML declaration
+     The concrete use of a :term:`ZCML directive` within a ZCML file.
+
+   ZCML directive
+     A ZCML "tag" such as ``<view>`` or ``<route>``.
+
+   Resource Location
+     The act of locating a :term:`context` resource given a :term:`request`.
+     :term:`Traversal` and :term:`URL dispatch` are the resource location
+     subsystems used by Pyramid.
+

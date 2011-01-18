@@ -1166,8 +1166,8 @@ class TestLoadZCML(unittest.TestCase):
 
     def test_it(self):
         from zope.configuration import xmlconfig
-        import pyramid.includes
-        xmlconfig.file('configure.zcml', package=pyramid.includes)
+        import pyramid_zcml
+        xmlconfig.file('configure.zcml', package=pyramid_zcml)
 
 class TestRolledUpFactory(unittest.TestCase):
     def _callFUT(self, *factories):
@@ -1234,7 +1234,7 @@ class Test_load_zcml(unittest.TestCase):
         from pyramid_zcml import load_zcml
         from pyramid.config import Configurator
         c = Configurator(autocommit=autocommit, package=package)
-        c.add_directive('load_zcml', load_zcml)
+        c.add_directive('load_zcml', load_zcml, action_wrap=False)
         return c
 
     def test_load_zcml_default(self):
@@ -1292,7 +1292,7 @@ class Test_includeme(unittest.TestCase):
         from pyramid_zcml import includeme
         c = Configurator(autocommit=True)
         c.include(includeme)
-        self.failUnless(c.load_zcml.im_func.__docobj__ is load_zcml)
+        self.failUnless(c.load_zcml.im_func is load_zcml)
 
 class IDummy(Interface):
     pass
@@ -1322,6 +1322,56 @@ class DummyContext:
 
     def path(self, path):
         return path
+
+class TestMakeApp(unittest.TestCase):
+    def setUp(self):
+        from zope.deprecation import __show__
+        __show__.off()
+        testing.setUp()
+
+    def tearDown(self):
+        from zope.deprecation import __show__
+        __show__.on()
+        testing.tearDown()
+
+    def _callFUT(self, *arg, **kw):
+        from pyramid_zcml import make_app
+        return make_app(*arg, **kw)
+
+    def test_it(self):
+        from pyramid_zcml import includeme
+        settings = {'a':1}
+        rootfactory = object()
+        app = self._callFUT(rootfactory, settings=settings,
+                            Configurator=DummyConfigurator)
+        self.assertEqual(app.root_factory, rootfactory)
+        self.assertEqual(app.settings, settings)
+        self.assertEqual(app.zcml_file, 'configure.zcml')
+        self.assertEqual(app.zca_hooked, True)
+        self.assertEqual(app.included, [includeme])
+
+    def test_it_options_means_settings(self):
+        settings = {'a':1}
+        rootfactory = object()
+        app = self._callFUT(rootfactory, options=settings,
+                            Configurator=DummyConfigurator)
+        self.assertEqual(app.root_factory, rootfactory)
+        self.assertEqual(app.settings, settings)
+        self.assertEqual(app.zcml_file, 'configure.zcml')
+
+    def test_it_with_package(self):
+        package = object()
+        rootfactory = object()
+        app = self._callFUT(rootfactory, package=package,
+                            Configurator=DummyConfigurator)
+        self.assertEqual(app.package, package)
+
+    def test_it_with_custom_configure_zcml(self):
+        rootfactory = object()
+        settings = {'configure_zcml':'2.zcml'}
+        app = self._callFUT(rootfactory, filename='1.zcml', settings=settings,
+                            Configurator=DummyConfigurator)
+        self.assertEqual(app.zcml_file, '2.zcml')
 
 class Dummy:
     pass
@@ -1369,4 +1419,33 @@ class DummyLock:
 
     def release(self):
         self.released = True
+
+class DummyConfigurator(object):
+    def __init__(self, registry=None, package=None, root_factory=None,
+                 settings=None, autocommit=True):
+        self.root_factory = root_factory
+        self.package = package
+        self.settings = settings
+        self.autocommit = autocommit
+        self.included = []
+
+    def begin(self, request=None):
+        self.begun = True
+        self.request = request
+
+    def end(self):
+        self.ended = True
+
+    def include(self, func):
+        self.included.append(func)
+
+    def load_zcml(self, filename):
+        self.zcml_file = filename
+
+    def make_wsgi_app(self):
+        return self
+
+    def hook_zca(self):
+        self.zca_hooked = True
+
 

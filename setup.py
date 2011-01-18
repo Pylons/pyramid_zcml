@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2008-2010 Agendaless Consulting and Contributors.
+# Copyright (c) 2008-2011 Agendaless Consulting and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the BSD-like license at
@@ -27,7 +27,7 @@ except IOError:
     README = CHANGES = ''
 
 install_requires=[
-    'pyramid',
+    'pyramid', 'PasteScript',
     ]
 
 if platform.system() == 'Java':
@@ -60,6 +60,8 @@ setup(name='pyramid_zcml',
       tests_require = tests_require,
       test_suite="pyramid_zcml",
       entry_points = """
+      [paste.paster_create_template]
+      pyramid_starter_zcml=pyramid_zcml:StarterZCMLProjectTemplate
       """
       )
 
