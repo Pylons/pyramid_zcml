@@ -12,8 +12,6 @@
 #
 ##############################################################################
 
-__version__ = '0.0'
-
 import os
 import platform
 
@@ -27,7 +25,7 @@ except IOError:
     README = CHANGES = ''
 
 install_requires=[
-    'pyramid', 'PasteScript',
+    'pyramid>=1.0a10', 'PasteScript',
     ]
 
 if platform.system() == 'Java':
@@ -38,8 +36,8 @@ else:
                                        'WebTest', 'venusian']
 
 setup(name='pyramid_zcml',
-      version=__version__,
-      description='Experimental zcml externalization support for Pyramid',
+      version='0.1',
+      description='Zope Config Markup Language support for Pyramid',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
         "Intended Audience :: Developers",
