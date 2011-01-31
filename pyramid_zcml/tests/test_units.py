@@ -652,8 +652,7 @@ class TestStaticDirective(unittest.TestCase):
         return static(*arg, **kw)
 
     def test_it_with_slash(self):
-        from pyramid import testing
-        testing.registerDummySecurityPolicy(permissive=False)
+        self.config.testing_securitypolicy(permissive=False)
         from pyramid.static import PackageURLParser
         from zope.interface import implementedBy
         from pyramid.static import StaticURLInfo
@@ -697,7 +696,7 @@ class TestStaticDirective(unittest.TestCase):
     def test_it_with_nondefault_permission(self):
         from pyramid import testing
         from pyramid.exceptions import Forbidden
-        testing.registerDummySecurityPolicy(permissive=False)
+        self.config.testing_securitypolicy(permissive=False)
         from zope.interface import implementedBy
         from pyramid.static import StaticURLInfo
         from pyramid.interfaces import IView
