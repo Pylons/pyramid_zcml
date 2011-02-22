@@ -4,3 +4,7 @@ env26/
 *.pyc
 .coverage
 dist/
+.tox/
+nosetests.xml
+pyramid_zcml/coverage.xml
+
