@@ -69,6 +69,11 @@ Attributes
     (on all major browser platforms) that auth_tkt cookies will last
     for the lifetime of the user's browser session.
 
+``wild_domain``
+    A boolean value.  If it's set to "true", a cookie with a "wild" domain
+    value will only be sent back by the browser during ``remember``.
+    It defaults to "true".
+
 Example
 ~~~~~~~
 
@@ -84,6 +89,7 @@ Example
     timeout="86400"
     reissue_time="600"
     max_age="31536000"
+    wild_domain="true"
     />
 
 Alternatives

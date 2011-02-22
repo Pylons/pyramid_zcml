@@ -1,6 +1,11 @@
 Next release
 ------------
 
+- Add ``wild_domain`` argument to authtkauthpolicy directive.
+
+- Depend on ``pyramid>=1.0b1`` (``wild_domain`` argument to authtktauthpolicy
+  directive).
+
 - Make tests pass on Pyramid 1.0; squash testing deprecation warnings.
 
 0.1

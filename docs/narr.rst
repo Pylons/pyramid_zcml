@@ -473,8 +473,8 @@ completely equivalent:
 
 We've now configured a Pyramid helloworld application
 declaratively.  More information about this mode of configuration is
-available in :ref:`declarative_configuration` and within
-:ref:`zcml_reference`.
+available in :ref:`declarative_configuration`.
+
 
 .. index::
    single: ZCML granularity

@@ -403,6 +403,7 @@ class IAuthTktAuthenticationPolicyDirective(Interface):
     max_age = Int(title=u"max_age", required=False, default=None)
     path = ASCIILine(title=u"path", required=False, default='/')
     http_only = Bool(title=u"http_only", required=False, default=False)
+    wild_domain = Bool(title=u"wild_domain", required=False, default=True)
 
 def authtktauthenticationpolicy(_context,
                                 secret,
@@ -414,7 +415,8 @@ def authtktauthenticationpolicy(_context,
                                 reissue_time=None,
                                 max_age=None,
                                 http_only=False,
-                                path='/'):
+                                path='/',
+                                wild_domain=True):
     try:
         policy = AuthTktAuthenticationPolicy(secret,
                                              callback=callback,
@@ -425,7 +427,8 @@ def authtktauthenticationpolicy(_context,
                                              reissue_time = reissue_time,
                                              max_age=max_age,
                                              http_only=http_only,
-                                             path=path)
+                                             path=path,
+                                             wild_domain=wild_domain)
     except ValueError, why:
         raise ConfigurationError(str(why))
     # authentication policies must be registered eagerly so they can
