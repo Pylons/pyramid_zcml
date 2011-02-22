@@ -1,5 +1,5 @@
-Next release
-------------
+0.2 (2011-02-22)
+-----------------
 
 - Add ``wild_domain`` argument to authtkauthpolicy directive.
 
@@ -8,8 +8,8 @@ Next release
 
 - Make tests pass on Pyramid 1.0; squash testing deprecation warnings.
 
-0.1
----
+0.1 (unknown)
+-------------
 
 - Initial release, all ZCML directives broken out of Pyramid core.
 
