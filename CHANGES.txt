@@ -1,5 +1,5 @@
-Next release
-------------
+0.3 (2011-07-22)
+----------------
 
 - Add tox.ini for testing.
 
