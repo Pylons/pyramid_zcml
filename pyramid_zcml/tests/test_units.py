@@ -837,11 +837,15 @@ class TestZCMLScanDirective(unittest.TestCase):
         return scan(context, package)
 
     def test_it(self):
+        class DummyVenusianCategories(dict):
+            def attached_to(self, ob):
+                return True
         dummy_module = DummyModule()
         def foo(): pass
         def bar(scanner, name, ob):
             dummy_module.scanned = True
-        foo.__venusian_callbacks__ = {'pyramid':[bar]}
+        categories = DummyVenusianCategories({'pyramid':[bar]})
+        foo.__venusian_callbacks__ = categories
         dummy_module.foo = foo
         
         context = self.config._ctx

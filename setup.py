@@ -26,7 +26,6 @@ except IOError:
 
 install_requires=[
     'pyramid>=1.0b1', # autktauthenticationpolicy wild_domain
-    'PasteScript',
     ]
 
 if platform.system() == 'Java':
