@@ -3,6 +3,8 @@ Next release
 
 - Add tox.ini for testing.
 
+- Pyramid 1.1 test suite fixes.
+
 0.2 (2011-02-22)
 -----------------
 

@@ -6,6 +6,13 @@ import unittest
 
 from pyramid import testing
 
+try:
+    # pyramid 1.1
+    from pyramid.renderers import null_renderer
+except ImportError: # pragma: no cover
+    # pyramid 1.0
+    null_renderer = None
+
 from zope.interface import Interface
 from zope.interface import implements
 
@@ -60,7 +67,7 @@ class TestViewDirective(unittest.TestCase):
             return True
         preds = (pred1, pred2)
         self._callFUT(context, 'repoze.view', IDummy, view=view,
-                      custom_predicates=preds)
+                      custom_predicates=preds, renderer=null_renderer)
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
         discrim = ('view', IDummy, '', None, IView, None, None, None, None,
@@ -83,7 +90,7 @@ class TestViewDirective(unittest.TestCase):
         class Foo:
             pass
         self._callFUT(context, 'repoze.view', for_=Foo, view=view,
-                      context=IDummy)
+                      context=IDummy, renderer=null_renderer)
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
         discrim = ('view', IDummy, '', None, IView, None, None, None, None,
@@ -104,7 +111,8 @@ class TestViewDirective(unittest.TestCase):
         view = lambda *arg: 'OK'
         class Foo:
             pass
-        self._callFUT(context, 'repoze.view', for_=IDummy, view=view)
+        self._callFUT(context, 'repoze.view', for_=IDummy, view=view,
+                      renderer=null_renderer)
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
         discrim = ('view', IDummy, '', None, IView, None, None, None, None,
@@ -139,7 +147,7 @@ class TestNotFoundDirective(unittest.TestCase):
         context = self.config._ctx
         def view(request):
             return 'OK'
-        self._callFUT(context, view)
+        self._callFUT(context, view, renderer=null_renderer)
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
 
@@ -207,7 +215,7 @@ class TestForbiddenDirective(unittest.TestCase):
         context = self.config._ctx
         def view(request):
             return 'OK'
-        self._callFUT(context, view)
+        self._callFUT(context, view, renderer=null_renderer)
         actions = extract_actions(context.actions)
 
         self.assertEqual(len(actions), 1)
@@ -393,18 +401,6 @@ class TestAuthTktAuthenticationPolicyDirective(unittest.TestCase):
         self.assertEqual(policy.cookie.secret, 'sosecret')
         self.assertEqual(policy.callback, callback)
 
-    def test_it_configerror(self):
-        from pyramid.exceptions import ConfigurationError
-        context = self.config._ctx
-        def callback(identity, request):
-            """ """
-        self.assertRaises(ConfigurationError,
-                          self._callFUT,
-                          context, 'sosecret', callback=callback,
-                          cookie_name='auth_tkt',
-                          secure=True, include_ip=True, timeout=100,
-                          reissue_time=500, http_only=True,
-                          path="/cgi-bin/app.cgi/")
 
 class TestACLAuthorizationPolicyDirective(unittest.TestCase):
     def setUp(self):
@@ -481,8 +477,7 @@ class TestRouteDirective(unittest.TestCase):
 
         route_action = actions[1]
         route_discriminator = route_action['discriminator']
-        self.assertEqual(route_discriminator,
-                         ('route', 'name', False, None, None, None, None,None))
+        self.assertEqual(route_discriminator[:2], ('route', 'name'))
         self._assertRoute('name', 'pattern')
 
         wrapped = reg.adapters.lookup(
@@ -511,8 +506,7 @@ class TestRouteDirective(unittest.TestCase):
 
         route_action = actions[1]
         route_discriminator = route_action['discriminator']
-        self.assertEqual(route_discriminator,
-                         ('route', 'name', False, None, None, None, None,None))
+        self.assertEqual(route_discriminator[:2], ('route', 'name'))
 
         self._assertRoute('name', 'pattern')
         wrapped = reg.adapters.lookup(
@@ -543,8 +537,8 @@ class TestRouteDirective(unittest.TestCase):
 
         route_action = actions[1]
         route_discriminator = route_action['discriminator']
-        self.assertEqual(route_discriminator,
-                         ('route', 'name', False, None, None, None, None,None))
+        self.assertEqual(route_discriminator[:2],
+                         ('route', 'name'))
 
         self._assertRoute('name', 'pattern')
         wrapped = reg.adapters.lookup(
@@ -579,8 +573,7 @@ class TestRouteDirective(unittest.TestCase):
 
         route_action = actions[1]
         route_discriminator = route_action['discriminator']
-        self.assertEqual(route_discriminator,
-                         ('route', 'name', False, None, None, None, None,None))
+        self.assertEqual(route_discriminator[:2], ('route', 'name'))
         self._assertRoute('name', 'pattern')
 
         wrapped = reg.adapters.lookup(
@@ -593,8 +586,6 @@ class TestRouteDirective(unittest.TestCase):
     def test_with_custom_predicates(self):
         def pred1(context, request): pass
         def pred2(context, request): pass
-        preds = tuple(sorted([pred1, pred2]))
-
         context = self.config._ctx
 
         self._callFUT(context, 'name', 'pattern',
@@ -604,9 +595,7 @@ class TestRouteDirective(unittest.TestCase):
 
         route_action = actions[0]
         route_discriminator = route_action['discriminator']
-        self.assertEqual(
-            route_discriminator,
-            ('route', 'name', False, None, None, None, None,None) + preds)
+        self.assertEqual(route_discriminator[:2], ('route', 'name'))
         self._assertRoute('name', 'pattern', 2)
 
     def test_with_path_argument_no_pattern(self):
@@ -617,8 +606,7 @@ class TestRouteDirective(unittest.TestCase):
 
         route_action = actions[0]
         route_discriminator = route_action['discriminator']
-        self.assertEqual(route_discriminator,
-                         ('route', 'name', False, None, None, None, None,None))
+        self.assertEqual(route_discriminator[:2], ('route', 'name'))
         self._assertRoute('name', 'pattern')
 
     def test_with_path_argument_and_pattern(self):
@@ -629,8 +617,7 @@ class TestRouteDirective(unittest.TestCase):
 
         route_action = actions[0]
         route_discriminator = route_action['discriminator']
-        self.assertEqual(route_discriminator,
-                         ('route', 'name', False, None, None, None, None,None))
+        self.assertEqual(route_discriminator[:2], ('route', 'name'))
         self._assertRoute('name', 'pattern')
         
 
@@ -663,22 +650,20 @@ class TestStaticDirective(unittest.TestCase):
         reg = self.config.registry
         context = self.config._ctx
 
-        self._callFUT(context, 'name', 'fixtures/static')
+        self._callFUT(context, 'name', 'fixtures/static',
+                      renderer=null_renderer)
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 2)
 
-        view_action = actions[0]
+        route_action = actions[0]
+        discriminator = route_action['discriminator']
+        self.assertEqual(discriminator[:2], ('route', 'name/',))
+
+        view_action = actions[1]
         discriminator = view_action['discriminator']
-        self.assertEqual(discriminator[:3], ('view', StaticURLInfo, ''))
+        self.assertEqual(discriminator[:1], ('view',))
         self.assertEqual(discriminator[4], IView)
         view_action['callable'](*view_action['args'], **view_action['kw'])
-
-        route_action = actions[1]
-        discriminator = route_action['discriminator']
-        self.assertEqual(
-            discriminator,
-            ('route', 'name/', False, None, None, None, None, None)
-            )
 
         mapper = reg.getUtility(IRoutesMapper)
         routes = mapper.get_routes()
@@ -709,17 +694,16 @@ class TestStaticDirective(unittest.TestCase):
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 2)
 
-        view_action = actions[0]
+        route_action = actions[0]
+        discriminator = route_action['discriminator']
+        self.assertEqual(discriminator[:2], ('route', 'name/'))
+
+        view_action = actions[1]
         discriminator = view_action['discriminator']
-        self.assertEqual(discriminator[:3], ('view', StaticURLInfo, ''))
+        self.assertEqual(discriminator[:1], ('view',))
         self.assertEqual(discriminator[4], IView)
         view_action['callable'](*view_action['args'], **view_action['kw'])
 
-        route_action = actions[1]
-        discriminator = route_action['discriminator']
-        self.assertEqual(
-            discriminator,
-            ('route', 'name/', False, None, None, None, None, None))
         mapper = reg.getUtility(IRoutesMapper)
         routes = mapper.get_routes()
         self.assertEqual(len(routes), 1)

@@ -300,6 +300,7 @@ def route(_context,
         use_global_views=use_global_views,
         traverse=traverse,
         )
+        
 
 class ISystemViewDirective(Interface):
     view = GlobalObject(
@@ -429,7 +430,7 @@ def authtktauthenticationpolicy(_context,
                                              http_only=http_only,
                                              path=path,
                                              wild_domain=wild_domain)
-    except ValueError, why:
+    except ValueError, why: # pragma: no cover
         raise ConfigurationError(str(why))
     # authentication policies must be registered eagerly so they can
     # be found by the view registration machinery
@@ -486,12 +487,13 @@ class IStaticDirective(Interface):
         required = False)
 
 def static(_context, name, path, cache_max_age=3600,
-           permission='__no_permission_required__'):
+           permission='__no_permission_required__',
+           renderer=None):
     """ Handle ``static`` ZCML directives
     """
     config = Configurator.with_context(_context)
     config.add_static_view(name, path, cache_max_age=cache_max_age,
-                           permission=permission)
+                           permission=permission, renderer=renderer)
 
 class IScanDirective(Interface):
     package = GlobalObject(
