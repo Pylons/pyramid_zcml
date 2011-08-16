@@ -25,7 +25,7 @@ except IOError:
     README = CHANGES = ''
 
 install_requires=[
-    'pyramid>=1.0b1', # autktauthenticationpolicy wild_domain
+    'pyramid>=1.2dev', # set_auth{entication|orization}_policy
     ]
 
 if platform.system() == 'Java':

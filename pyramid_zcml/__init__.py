@@ -281,6 +281,14 @@ def route(_context,
         raise ConfigurationError('route directive must include a "pattern"')
 
     config = Configurator.with_context(_context)
+    if view:
+        config.add_view(
+            route_name=name,
+            view=view,
+            permission=view_permission,
+            context=view_context,
+            renderer=view_renderer,
+            attr=view_attr)
     config.add_route(
         name,
         pattern,
@@ -292,15 +300,9 @@ def route(_context,
         request_method=request_method,
         request_param=request_param,
         custom_predicates=custom_predicates,
-        view=view,
-        view_context=view_context,
-        view_permission=view_permission,
-        view_renderer=view_renderer,
-        view_attr=view_attr,
         use_global_views=use_global_views,
         traverse=traverse,
         )
-        
 
 class ISystemViewDirective(Interface):
     view = GlobalObject(
@@ -376,7 +378,7 @@ def repozewho1authenticationpolicy(_context, identifier_name='auth_tkt',
     # authentication policies must be registered eagerly so they can
     # be found by the view registration machinery
     config = Configurator.with_context(_context)
-    config._set_authentication_policy(policy)
+    config.set_authentication_policy(policy)
 
 class IRemoteUserAuthenticationPolicyDirective(Interface):
     environ_key = TextLine(title=u'environ_key', required=False,
@@ -390,7 +392,7 @@ def remoteuserauthenticationpolicy(_context, environ_key='REMOTE_USER',
     # authentication policies must be registered eagerly so they can
     # be found by the view registration machinery
     config = Configurator.with_context(_context)
-    config._set_authentication_policy(policy)
+    config.set_authentication_policy(policy)
 
 class IAuthTktAuthenticationPolicyDirective(Interface):
     secret = TextLine(title=u'secret', required=True)
@@ -435,7 +437,7 @@ def authtktauthenticationpolicy(_context,
     # authentication policies must be registered eagerly so they can
     # be found by the view registration machinery
     config = Configurator.with_context(_context)
-    config._set_authentication_policy(policy)
+    config.set_authentication_policy(policy)
 
 class IACLAuthorizationPolicyDirective(Interface):
     pass
@@ -445,7 +447,7 @@ def aclauthorizationpolicy(_context):
     # authorization policies must be registered eagerly so they can be
     # found by the view registration machinery
     config = Configurator.with_context(_context)
-    config._set_authorization_policy(policy)
+    config.set_authorization_policy(policy)
 
 class IRendererDirective(Interface):
     factory = GlobalObject(

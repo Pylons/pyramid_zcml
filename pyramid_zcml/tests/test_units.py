@@ -283,8 +283,6 @@ class TestRepozeWho1AuthenticationPolicyDirective(unittest.TestCase):
         self.assertEqual(len(actions), 1)
         regadapt = actions[0]
         self.assertEqual(regadapt['discriminator'], IAuthenticationPolicy)
-        self.assertEqual(regadapt['callable'], None)
-        self.assertEqual(regadapt['args'], ())
         policy = reg.getUtility(IAuthenticationPolicy)
         self.assertEqual(policy.callback, None)
         self.assertEqual(policy.identifier_name, 'auth_tkt')
@@ -300,8 +298,6 @@ class TestRepozeWho1AuthenticationPolicyDirective(unittest.TestCase):
         self.assertEqual(len(actions), 1)
         regadapt = actions[0]
         self.assertEqual(regadapt['discriminator'], IAuthenticationPolicy)
-        self.assertEqual(regadapt['callable'], None)
-        self.assertEqual(regadapt['args'], ())
         policy = reg.getUtility(IAuthenticationPolicy)
         self.assertEqual(policy.callback, callback)
         self.assertEqual(policy.identifier_name, 'something')
@@ -329,8 +325,6 @@ class TestRemoteUserAuthenticationPolicyDirective(unittest.TestCase):
         self.assertEqual(len(actions), 1)
         regadapt = actions[0]
         self.assertEqual(regadapt['discriminator'], IAuthenticationPolicy)
-        self.assertEqual(regadapt['callable'], None)
-        self.assertEqual(regadapt['args'], ())
         policy = reg.getUtility(IAuthenticationPolicy)
         self.assertEqual(policy.environ_key, 'REMOTE_USER')
         self.assertEqual(policy.callback, None)
@@ -346,8 +340,6 @@ class TestRemoteUserAuthenticationPolicyDirective(unittest.TestCase):
         self.assertEqual(len(actions), 1)
         regadapt = actions[0]
         self.assertEqual(regadapt['discriminator'], IAuthenticationPolicy)
-        self.assertEqual(regadapt['callable'], None)
-        self.assertEqual(regadapt['args'], ())
         policy = reg.getUtility(IAuthenticationPolicy)
         self.assertEqual(policy.environ_key, 'BLAH')
         self.assertEqual(policy.callback, callback)
@@ -373,8 +365,6 @@ class TestAuthTktAuthenticationPolicyDirective(unittest.TestCase):
         self.assertEqual(len(actions), 1)
         regadapt = actions[0]
         self.assertEqual(regadapt['discriminator'], IAuthenticationPolicy)
-        self.assertEqual(regadapt['callable'], None)
-        self.assertEqual(regadapt['args'], ())
         policy = reg.getUtility(IAuthenticationPolicy)
         self.assertEqual(policy.cookie.secret, 'sosecret')
         self.assertEqual(policy.callback, None)
@@ -393,8 +383,6 @@ class TestAuthTktAuthenticationPolicyDirective(unittest.TestCase):
         self.assertEqual(len(actions), 1)
         regadapt = actions[0]
         self.assertEqual(regadapt['discriminator'], IAuthenticationPolicy)
-        self.assertEqual(regadapt['callable'], None)
-        self.assertEqual(regadapt['args'], ())
         policy = reg.getUtility(IAuthenticationPolicy)
         self.assertEqual(policy.cookie.path, '/sub/')
         self.assertEqual(policy.cookie.http_only, True)
@@ -426,8 +414,6 @@ class TestACLAuthorizationPolicyDirective(unittest.TestCase):
         self.assertEqual(len(actions), 1)
         regadapt = actions[0]
         self.assertEqual(regadapt['discriminator'], IAuthorizationPolicy)
-        self.assertEqual(regadapt['callable'], None)
-        self.assertEqual(regadapt['args'], ())
         policy = reg.getUtility(IAuthorizationPolicy)
         self.assertEqual(policy.__class__, ACLAuthorizationPolicy)
 
