@@ -1,5 +1,5 @@
-Next release
-------------
+0.4 (2011-08-17)
+----------------
 
 - Fix a unit test failure when used with Venusian 0.9.
 
