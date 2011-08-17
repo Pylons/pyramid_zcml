@@ -641,11 +641,15 @@ class TestStaticDirective(unittest.TestCase):
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 2)
 
-        route_action = actions[0]
+        if hasattr(self.config, 'add_response_adapter'):
+            # 1.1 +
+            route_action, view_action = actions[0], actions[1]
+        else:
+            view_action, route_action = actions[0], actions[1]
+
         discriminator = route_action['discriminator']
         self.assertEqual(discriminator[:2], ('route', 'name/',))
 
-        view_action = actions[1]
         discriminator = view_action['discriminator']
         self.assertEqual(discriminator[:1], ('view',))
         self.assertEqual(discriminator[4], IView)
@@ -665,7 +669,6 @@ class TestStaticDirective(unittest.TestCase):
         self.assertEqual(view(None, request).__class__, PackageURLParser)
 
     def test_it_with_nondefault_permission(self):
-        from pyramid import testing
         from pyramid.exceptions import Forbidden
         self.config.testing_securitypolicy(permissive=False)
         from zope.interface import implementedBy
@@ -680,11 +683,15 @@ class TestStaticDirective(unittest.TestCase):
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 2)
 
-        route_action = actions[0]
+        if hasattr(self.config, 'add_response_adapter'):
+            # 1.1 +
+            route_action, view_action = actions[0], actions[1]
+        else:
+            view_action, route_action = actions[0], actions[1]
+
         discriminator = route_action['discriminator']
         self.assertEqual(discriminator[:2], ('route', 'name/'))
 
-        view_action = actions[1]
         discriminator = view_action['discriminator']
         self.assertEqual(discriminator[:1], ('view',))
         self.assertEqual(discriminator[4], IView)

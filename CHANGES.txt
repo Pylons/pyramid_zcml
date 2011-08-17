@@ -3,8 +3,7 @@ Next release
 
 - Fix a unit test failure when used with Venusian 0.9.
 
-- Compatible with only Pyramid 1.2dev+ (uses e.g. set_authentication_policy
-  rather than _set_authentication_policy).
+- Compatible with Pyramid 1.2dev+.
 
 0.3 (2011-07-22)
 ----------------

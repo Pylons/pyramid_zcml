@@ -366,6 +366,13 @@ def asset(_context, to_override, override_with, _override=None):
     config = Configurator.with_context(_context)
     config.override_asset(to_override, override_with, _override=_override)
 
+def set_authentication_policy(config, policy):
+    # smooth over differences between pyramid 1.2dev and older
+    if hasattr(config, 'set_authentication_policy'):
+        config.set_authentication_policy(policy)
+    else:
+        config._set_authentication_policy(policy)
+
 class IRepozeWho1AuthenticationPolicyDirective(Interface):
     identifier_name = TextLine(title=u'identitfier_name', required=False,
                                default=u'auth_tkt')
@@ -378,7 +385,7 @@ def repozewho1authenticationpolicy(_context, identifier_name='auth_tkt',
     # authentication policies must be registered eagerly so they can
     # be found by the view registration machinery
     config = Configurator.with_context(_context)
-    config.set_authentication_policy(policy)
+    set_authentication_policy(config, policy)
 
 class IRemoteUserAuthenticationPolicyDirective(Interface):
     environ_key = TextLine(title=u'environ_key', required=False,
@@ -392,7 +399,7 @@ def remoteuserauthenticationpolicy(_context, environ_key='REMOTE_USER',
     # authentication policies must be registered eagerly so they can
     # be found by the view registration machinery
     config = Configurator.with_context(_context)
-    config.set_authentication_policy(policy)
+    set_authentication_policy(config, policy)
 
 class IAuthTktAuthenticationPolicyDirective(Interface):
     secret = TextLine(title=u'secret', required=True)
@@ -437,7 +444,7 @@ def authtktauthenticationpolicy(_context,
     # authentication policies must be registered eagerly so they can
     # be found by the view registration machinery
     config = Configurator.with_context(_context)
-    config.set_authentication_policy(policy)
+    set_authentication_policy(config, policy)
 
 class IACLAuthorizationPolicyDirective(Interface):
     pass
@@ -447,7 +454,11 @@ def aclauthorizationpolicy(_context):
     # authorization policies must be registered eagerly so they can be
     # found by the view registration machinery
     config = Configurator.with_context(_context)
-    config.set_authorization_policy(policy)
+    if hasattr(config, 'set_authorization_policy'):
+        # pyramid 1.2dev
+        config.set_authorization_policy(policy)
+    else:
+        config._set_authorization_policy(policy)
 
 class IRendererDirective(Interface):
     factory = GlobalObject(
