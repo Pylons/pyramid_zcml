@@ -1,3 +1,16 @@
+Next release
+------------
+
+- Fix tests under 1.2a4+.
+
+- Depend explicitly on zope.configuration.
+
+- Use our a local PyramidConfigurationMachine when collecting ZCML actions,
+  and splice the locally collected actions onto the configurator context's
+  actions when ZCML processing is done.  This provides Pyramid the freedom to
+  not rely on zope.configuration in the future, and somewhat futureproofs
+  ``pyramid_zcml`` from changes to action processing in Pyramid.
+
 0.5 (2011-08-24)
 ----------------
 

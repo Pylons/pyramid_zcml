@@ -4,8 +4,9 @@ from pyramid.view import view_config
 def first(request):
     return {'result':'OK1'}
 
-@view_config(renderer='pyramid.tests.viewdecoratorapp.views:templates/foo.mak',
-             name='second')
+@view_config(
+    renderer='pyramid_zcml.tests.viewdecoratorapp.views:templates/foo.mak',
+    name='second')
 def second(request):
     return {'result':'OK2'}
 

@@ -26,6 +26,7 @@ except IOError:
 
 install_requires=[
     'pyramid>=1.0b1', # autktauthenticationpolicy wild_domain
+    'zope.configuration',
     ]
 
 if platform.system() == 'Java':

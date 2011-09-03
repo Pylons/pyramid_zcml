@@ -1129,6 +1129,16 @@ class Test_load_zcml(unittest.TestCase):
         from pyramid_zcml.tests.fixtureapp.models import IFixture
         self.failUnless(registry.queryUtility(IFixture)) # only in c.zcml
 
+    def test_load_zcml_without_autocommit(self):
+        from pyramid_zcml.tests.fixtureapp.models import IFixture
+        import pyramid_zcml.tests.fixtureapp
+        config = self._makeOne(package=pyramid_zcml.tests.fixtureapp,
+                               autocommit=False)
+        registry = config.load_zcml()
+        self.failIf(registry.queryUtility(IFixture)) # only in c.zcml
+        config.commit()
+        self.failUnless(registry.queryUtility(IFixture)) # only in c.zcml
+
     def test_load_zcml_routesapp(self):
         from pyramid.interfaces import IRoutesMapper
         config = self._makeOne(autocommit=True)
@@ -1256,6 +1266,22 @@ class TestMakeApp(unittest.TestCase):
         app = self._callFUT(rootfactory, filename='1.zcml', settings=settings,
                             Configurator=DummyConfigurator)
         self.assertEqual(app.zcml_file, '2.zcml')
+
+class TestPyramidConfigurationMachine(unittest.TestCase):
+    def _makeOne(self):
+        from pyramid_zcml import PyramidConfigurationMachine
+        m = PyramidConfigurationMachine()
+        return m
+        
+    def test_ctor(self):
+        m = self._makeOne()
+        self.assertEqual(m.autocommit, False)
+        self.assertEqual(m.route_prefix, None)
+
+    def test_processSpec(self):
+        m = self._makeOne()
+        self.assertTrue(m.processSpec('foo'))
+        self.assertFalse(m.processSpec('foo'))
 
 class Dummy:
     pass

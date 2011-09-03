@@ -8,6 +8,8 @@ from paste.util.template import paste_script_template_renderer
 from zope.configuration.fields import GlobalInterface
 from zope.configuration.fields import GlobalObject
 from zope.configuration.fields import Tokens
+from zope.configuration.xmlconfig import registerCommonDirectives
+from zope.configuration.config import ConfigurationMachine
 
 from zope.interface import Interface
 from zope.interface import implementedBy
@@ -28,7 +30,6 @@ from pyramid.asset import asset_spec_from_abspath
 from pyramid.threadlocal import get_current_registry
 
 from zope.configuration import xmlconfig
-from zope.configuration.config import GroupingContextDecorator
 
 ###################### directives ##########################
 
@@ -370,7 +371,7 @@ def set_authentication_policy(config, policy):
     # smooth over differences between pyramid 1.2dev and older
     if hasattr(config, 'set_authentication_policy'):
         config.set_authentication_policy(policy)
-    else:
+    else: # pragma: no cover
         config._set_authentication_policy(policy)
 
 class IRepozeWho1AuthenticationPolicyDirective(Interface):
@@ -457,7 +458,7 @@ def aclauthorizationpolicy(_context):
     if hasattr(config, 'set_authorization_policy'):
         # pyramid 1.2dev
         config.set_authorization_policy(policy)
-    else:
+    else: # pragma: no cover
         config._set_authorization_policy(policy)
 
 class IRendererDirective(Interface):
@@ -816,12 +817,6 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
         __import__(package_name)
         package = sys.modules[package_name]
 
-    registry = self.registry
-    self.manager.push({'registry':registry, 'request':None})
-    context = self._ctx
-    if context is None:
-        context = self._ctx = self._make_context(self.autocommit)
-
     # To avoid breaking people's expectations of how ZCML works, we
     # cannot autocommit ZCML actions incrementally.  If we commit actions
     # incrementally, configuration outcome will be controlled purely by
@@ -831,19 +826,48 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
     # execute=self.autocommit to xmlconfig.file below, which will cause
     # the actions implied by the ZCML that was parsed to be committed
     # right away once parsing is finished if autocommit is True.
-    context = GroupingContextDecorator(context)
-    context.autocommit = False 
 
+    context = PyramidConfigurationMachine()
+    context.registry = self.registry
+    context.autocommit = False
+    context.route_prefix = getattr(self, 'route_prefix', None)
+    context.package = package
+    registerCommonDirectives(context)
+
+    self.manager.push({'registry':self.registry, 'request':None})
     lock.acquire()
+
     try:
-        context.package = package
         xmlconfig.file(filename, package, context=context,
                        execute=self.autocommit)
     finally:
         lock.release()
         self.manager.pop()
 
-    return registry
+    _ctx = self._ctx
+    if _ctx is None:
+        _ctx = self._ctx = self._make_context(self.autocommit)
+    _ctx.actions.extend(context.actions)
+
+    return self.registry
+
+class PyramidConfigurationMachine(ConfigurationMachine):
+    autocommit = False
+    route_prefix = None
+
+    def processSpec(self, spec):
+        """Check whether a callable needs to be processed.  The ``spec``
+        refers to a unique identifier for the callable.
+
+        Return True if processing is needed and False otherwise. If
+        the callable needs to be processed, it will be marked as
+        processed, assuming that the caller will procces the callable if
+        it needs to be processed.
+        """
+        if spec in self._seen_files:
+            return False
+        self._seen_files.add(spec)
+        return True
 
 # note that ``options`` is a b/w compat alias for ``settings`` and
 # ``Configurator`` is a testing dep inj
