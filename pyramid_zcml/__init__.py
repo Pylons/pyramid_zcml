@@ -843,7 +843,7 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
         self.manager.pop()
 
     _ctx = self._ctx
-    if _ctx is None:
+    if _ctx is None: # will never be true under 1.2a5+
         _ctx = self._ctx = self._make_context(self.autocommit)
     _ctx.actions.extend(context.actions)
     if self.autocommit:
