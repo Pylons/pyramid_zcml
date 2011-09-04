@@ -19,7 +19,6 @@ from zope.interface import implements
 class TestViewDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -34,7 +33,7 @@ class TestViewDirective(unittest.TestCase):
         from pyramid.interfaces import IRendererFactory
         from pyramid.interfaces import IRequest
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         def factory(path):
             def foo(*arg):
                 return 'OK'
@@ -54,7 +53,7 @@ class TestViewDirective(unittest.TestCase):
         from pyramid.interfaces import IViewClassifier
         from pyramid.interfaces import IRequest
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         view = lambda *arg: 'OK'
         def pred1(context, request):
             return True
@@ -80,7 +79,7 @@ class TestViewDirective(unittest.TestCase):
         from pyramid.interfaces import IViewClassifier
         from pyramid.interfaces import IRequest
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         view = lambda *arg: 'OK'
         class Foo:
             pass
@@ -102,7 +101,7 @@ class TestViewDirective(unittest.TestCase):
         from pyramid.interfaces import IViewClassifier
         from pyramid.interfaces import IRequest
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         view = lambda *arg: 'OK'
         class Foo:
             pass
@@ -122,7 +121,6 @@ class TestViewDirective(unittest.TestCase):
 class TestNotFoundDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -139,7 +137,7 @@ class TestNotFoundDirective(unittest.TestCase):
         from pyramid.exceptions import NotFound
 
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         def view(request):
             return 'OK'
         self._callFUT(context, view, renderer=null_renderer)
@@ -176,7 +174,7 @@ class TestNotFoundDirective(unittest.TestCase):
         config.commit()
         def view(request):
             return {}
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self._callFUT(context, view, renderer='fake.pt')
         actions = extract_actions(context.actions)
         regadapt = actions[0]
@@ -192,7 +190,6 @@ class TestNotFoundDirective(unittest.TestCase):
 class TestForbiddenDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -208,7 +205,7 @@ class TestForbiddenDirective(unittest.TestCase):
         from pyramid.interfaces import IViewClassifier
         from pyramid.exceptions import Forbidden
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         def view(request):
             return 'OK'
         self._callFUT(context, view, renderer=null_renderer)
@@ -243,7 +240,7 @@ class TestForbiddenDirective(unittest.TestCase):
         config.commit()
         def view(request):
             return {}
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self._callFUT(context, view, renderer='fake.pt')
         actions = extract_actions(context.actions)
         regadapt = actions[0]
@@ -259,7 +256,6 @@ class TestForbiddenDirective(unittest.TestCase):
 class TestRepozeWho1AuthenticationPolicyDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -271,7 +267,7 @@ class TestRepozeWho1AuthenticationPolicyDirective(unittest.TestCase):
     def test_it_defaults(self):
         reg = self.config.registry
         from pyramid.interfaces import IAuthenticationPolicy
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self._callFUT(context)
         actions = extract_actions(context.actions)
         from pyramid.interfaces import IAuthorizationPolicy
@@ -284,7 +280,7 @@ class TestRepozeWho1AuthenticationPolicyDirective(unittest.TestCase):
     def test_it(self):
         reg = self.config.registry
         from pyramid.interfaces import IAuthenticationPolicy
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         def callback(identity, request):
             """ """
         self._callFUT(context, identifier_name='something', callback=callback)
@@ -299,7 +295,6 @@ class TestRepozeWho1AuthenticationPolicyDirective(unittest.TestCase):
 class TestRemoteUserAuthenticationPolicyDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -311,7 +306,7 @@ class TestRemoteUserAuthenticationPolicyDirective(unittest.TestCase):
     def test_defaults(self):
         from pyramid.interfaces import IAuthenticationPolicy
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         def callback(identity, request):
             """ """
         self._callFUT(context)
@@ -326,7 +321,7 @@ class TestRemoteUserAuthenticationPolicyDirective(unittest.TestCase):
     def test_it(self):
         from pyramid.interfaces import IAuthenticationPolicy
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         def callback(identity, request):
             """ """
         self._callFUT(context, environ_key='BLAH', callback=callback)
@@ -341,7 +336,6 @@ class TestRemoteUserAuthenticationPolicyDirective(unittest.TestCase):
 class TestAuthTktAuthenticationPolicyDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -353,7 +347,7 @@ class TestAuthTktAuthenticationPolicyDirective(unittest.TestCase):
     def test_it_defaults(self):
         from pyramid.interfaces import IAuthenticationPolicy
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self._callFUT(context, 'sosecret')
         actions = extract_actions(context.actions)
         from pyramid.interfaces import IAuthorizationPolicy
@@ -366,7 +360,7 @@ class TestAuthTktAuthenticationPolicyDirective(unittest.TestCase):
     def test_it_noconfigerror(self):
         from pyramid.interfaces import IAuthenticationPolicy
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         def callback(identity, request):
             """ """
         self._callFUT(context, 'sosecret', callback=callback,
@@ -387,7 +381,6 @@ class TestAuthTktAuthenticationPolicyDirective(unittest.TestCase):
 class TestACLAuthorizationPolicyDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -399,13 +392,13 @@ class TestACLAuthorizationPolicyDirective(unittest.TestCase):
     def test_it(self):
         from pyramid.authorization import ACLAuthorizationPolicy
         from pyramid.interfaces import IAuthorizationPolicy
-        reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         def callback(identity, request):
             """ """
         self._callFUT(context)
-        actions = extract_actions(context.actions)
+        actions = extract_actions(self.config._ctx.actions)
         from pyramid.interfaces import IAuthenticationPolicy
+        reg = self.config.registry
         reg.registerUtility(object(), IAuthenticationPolicy)
         _execute_actions(actions)
         policy = reg.getUtility(IAuthorizationPolicy)
@@ -414,7 +407,6 @@ class TestACLAuthorizationPolicyDirective(unittest.TestCase):
 class TestRouteDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -441,7 +433,7 @@ class TestRouteDirective(unittest.TestCase):
         from pyramid.interfaces import IViewClassifier
         from pyramid.interfaces import IRouteRequest
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         view = lambda *arg: 'OK'
         self._callFUT(context, 'name', 'pattern', view=view)
         actions = extract_actions(context.actions)
@@ -456,7 +448,7 @@ class TestRouteDirective(unittest.TestCase):
         from pyramid.interfaces import IViewClassifier
         from pyramid.interfaces import IRouteRequest
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         view = lambda *arg: 'OK'
         self._callFUT(context, 'name', 'pattern', view=view,
                       view_context=IDummy)
@@ -473,7 +465,7 @@ class TestRouteDirective(unittest.TestCase):
         from pyramid.interfaces import IViewClassifier
         from pyramid.interfaces import IRouteRequest
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         view = lambda *arg: 'OK'
         class Foo:
             pass
@@ -497,7 +489,7 @@ class TestRouteDirective(unittest.TestCase):
         def renderer(path):
             return lambda *arg: 'OK'
         reg.registerUtility(renderer, IRendererFactory, name='.pt')
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
 
         view = lambda *arg: 'OK'
         self._callFUT(context, 'name', 'pattern', view=view,
@@ -517,7 +509,7 @@ class TestRouteDirective(unittest.TestCase):
     def test_with_custom_predicates(self):
         def pred1(context, request): pass
         def pred2(context, request): pass
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
 
         self._callFUT(context, 'name', 'pattern',
                       custom_predicates=(pred1, pred2))
@@ -526,14 +518,14 @@ class TestRouteDirective(unittest.TestCase):
         self._assertRoute('name', 'pattern', 2)
 
     def test_with_path_argument_no_pattern(self):
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self._callFUT(context, 'name', path='pattern')
         actions = extract_actions(context.actions)
         _execute_actions(actions)
         self._assertRoute('name', 'pattern')
 
     def test_with_path_argument_and_pattern(self):
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self._callFUT(context, 'name', pattern='pattern', path='path')
         actions = extract_actions(context.actions)
         _execute_actions(actions)
@@ -541,13 +533,12 @@ class TestRouteDirective(unittest.TestCase):
 
     def test_with_neither_path_nor_pattern(self):
         from pyramid.exceptions import ConfigurationError
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self.assertRaises(ConfigurationError, self._callFUT, context, 'name')
 
 class TestStaticDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -569,7 +560,7 @@ class TestStaticDirective(unittest.TestCase):
         from pyramid.interfaces import IRouteRequest
         from pyramid.interfaces import IRoutesMapper
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
 
         self._callFUT(context, 'name', 'fixtures/static',
                       renderer=null_renderer)
@@ -601,7 +592,7 @@ class TestStaticDirective(unittest.TestCase):
         from pyramid.interfaces import IRouteRequest
         from pyramid.interfaces import IRoutesMapper
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self._callFUT(context, 'name', 'fixtures/static', permission='aperm')
         actions = extract_actions(context.actions)
         _execute_actions(actions)
@@ -622,7 +613,6 @@ class TestStaticDirective(unittest.TestCase):
 class TestAssetDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -633,7 +623,7 @@ class TestAssetDirective(unittest.TestCase):
 
     def test_it(self):
         import pyramid_zcml.tests
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         L = []
         def dummy_override(*arg):
             L.append(arg)
@@ -654,7 +644,6 @@ class TestAssetDirective(unittest.TestCase):
 class TestRendererDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -666,7 +655,7 @@ class TestRendererDirective(unittest.TestCase):
     def test_it(self):
         from pyramid.interfaces import IRendererFactory
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         renderer = lambda *arg, **kw: None
         self._callFUT(context, renderer, 'r')
         actions = extract_actions(context.actions)
@@ -726,7 +715,6 @@ class TestZCMLConfigure(unittest.TestCase):
 class TestZCMLScanDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -747,14 +735,13 @@ class TestZCMLScanDirective(unittest.TestCase):
         foo.__venusian_callbacks__ = categories
         dummy_module.foo = foo
         
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self._callFUT(context, dummy_module)
         self.assertEqual(dummy_module.scanned, True)
 
 class TestAdapterDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -846,7 +833,6 @@ class TestAdapterDirective(unittest.TestCase):
 class TestSubscriberDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -856,39 +842,39 @@ class TestSubscriberDirective(unittest.TestCase):
         return subscriber(*arg, **kw)
 
     def test_no_factory_no_handler(self):
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self.assertRaises(TypeError,
                           self._callFUT, context, for_=None, factory=None,
                           handler=None,
                           provides=None)
 
     def test_handler_with_provides(self):
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self.assertRaises(TypeError,
                           self._callFUT, context, for_=None, factory=None,
                           handler=1, provides=1)
 
     def test_handler_and_factory(self):
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self.assertRaises(TypeError,
                           self._callFUT, context, for_=None, factory=1,
                           handler=1, provides=None)
 
     def test_no_provides_with_factory(self):
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self.assertRaises(TypeError,
                           self._callFUT, context, for_=None, factory=1,
                           handler=None, provides=None)
 
     def test_adapted_by_as_for_is_None(self):
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         factory = DummyFactory()
         factory.__component_adapts__ = None
         self.assertRaises(TypeError, self._callFUT, context, for_=None,
                           factory=factory, handler=None, provides=IFactory)
         
     def test_register_with_factory(self):
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         factory = DummyFactory()
         self._callFUT(context, for_=(IDummy,),
                       factory=factory, handler=None, provides=IFactory)
@@ -906,7 +892,7 @@ class TestSubscriberDirective(unittest.TestCase):
             )
 
     def test_register_with_handler(self):
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         factory = DummyFactory()
         self._callFUT(context, for_=(IDummy,),
                       factory=None, handler=factory)
@@ -925,7 +911,6 @@ class TestSubscriberDirective(unittest.TestCase):
 class TestUtilityDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -935,17 +920,17 @@ class TestUtilityDirective(unittest.TestCase):
         return utility(*arg, **kw)
 
     def test_factory_and_component(self):
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self.assertRaises(TypeError, self._callFUT,
                           context, factory=1, component=1)
 
     def test_missing_provides(self):
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self.assertRaises(TypeError, self._callFUT, context, provides=None)
         
     def test_provides_from_factory_implements(self):
         from pyramid.registry import Registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self._callFUT(context, factory=DummyFactory)
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
@@ -958,7 +943,7 @@ class TestUtilityDirective(unittest.TestCase):
 
     def test_provides_from_component_provides(self):
         from pyramid.registry import Registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         component = DummyFactory()
         self._callFUT(context, component=component)
         actions = extract_actions(context.actions)
@@ -973,7 +958,6 @@ class TestUtilityDirective(unittest.TestCase):
 class TestTranslationDirDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -987,7 +971,7 @@ class TestTranslationDirDirective(unittest.TestCase):
         here = os.path.dirname(__file__)
         expected = os.path.join(here, 'localeapp', 'locale')
         from pyramid.interfaces import ITranslationDirectories
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         tdir = 'pyramid_zcml.tests.localeapp:locale'
         self._callFUT(context, tdir)
         util = self.config.registry.getUtility(ITranslationDirectories)
@@ -996,7 +980,6 @@ class TestTranslationDirDirective(unittest.TestCase):
 class TestLocaleNegotiatorDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -1007,7 +990,7 @@ class TestLocaleNegotiatorDirective(unittest.TestCase):
 
     def test_it(self):
         from pyramid.interfaces import ILocaleNegotiator
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         dummy_negotiator = object()
         self._callFUT(context, dummy_negotiator)
         actions = extract_actions(context.actions)
@@ -1022,7 +1005,6 @@ class TestLocaleNegotiatorDirective(unittest.TestCase):
 class TestDefaultPermissionDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
-        self.config._ctx = self.config._make_context()
 
     def tearDown(self):
         testing.tearDown()
@@ -1034,7 +1016,7 @@ class TestDefaultPermissionDirective(unittest.TestCase):
     def test_it(self):
         from pyramid.interfaces import IDefaultPermission
         reg = self.config.registry
-        context = self.config._ctx
+        context = DummyZCMLContext(self.config)
         self._callFUT(context, 'view')
         actions = extract_actions(context.actions)
         _execute_actions(actions)
@@ -1358,9 +1340,26 @@ class DummyConfigurator(object):
     def hook_zca(self):
         self.zca_hooked = True
 
+class DummyZCMLContext(object):
+    def __init__(self, config):
+        if hasattr(config, '_make_context'):
+            # 1.0, 1.1 b/c
+            config._ctx = config._make_context()
+        self.registry = config.registry
+        self.package = config.package
+        self.autocommit = config.autocommit
+        self.route_prefix = getattr(config, 'route_prefix', None)
+        self.basepath = getattr(config, 'basepath', None)
+        self.includepath = getattr(config, 'includepath', ())
+        self.info = getattr(config, 'info', '')
+        self.actions = config._ctx.actions
+        self._ctx = config._ctx
+
+    def action(self, *arg, **kw):
+        self._ctx.action(*arg, **kw)
+
 def _execute_actions(actions):
     for action in sorted(actions, key=lambda x: x['order']):
         if 'callable' in action:
             if action['callable']:
                 action['callable']()
-            
