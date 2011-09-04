@@ -1,9 +1,10 @@
-Next release
-------------
+0.6 (2011-09-04)
+----------------
 
-- Fix to work under 1.2a5+.
+- Fix to work under Pyramid 1.2a4 and better.
 
-- Depend explicitly on zope.configuration.
+- Depend explicitly on zope.configuration (upcoming releases of Pyramid will
+  not).
 
 - Use our a local PyramidConfigurationMachine when collecting ZCML actions,
   and splice the locally collected actions onto the configurator context's
