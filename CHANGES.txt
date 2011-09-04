@@ -1,7 +1,7 @@
 Next release
 ------------
 
-- Fix tests under 1.2a4+.
+- Fix to work under 1.2a5+.
 
 - Depend explicitly on zope.configuration.
 

@@ -1249,22 +1249,6 @@ class TestMakeApp(unittest.TestCase):
                             Configurator=DummyConfigurator)
         self.assertEqual(app.zcml_file, '2.zcml')
 
-class TestPyramidConfigurationMachine(unittest.TestCase):
-    def _makeOne(self):
-        from pyramid_zcml import PyramidConfigurationMachine
-        m = PyramidConfigurationMachine()
-        return m
-        
-    def test_ctor(self):
-        m = self._makeOne()
-        self.assertEqual(m.autocommit, False)
-        self.assertEqual(m.route_prefix, None)
-
-    def test_processSpec(self):
-        m = self._makeOne()
-        self.assertTrue(m.processSpec('foo'))
-        self.assertFalse(m.processSpec('foo'))
-
 class Dummy:
     pass
 

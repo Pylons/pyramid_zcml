@@ -369,7 +369,7 @@ def asset(_context, to_override, override_with, _override=None):
 
 def set_authentication_policy(config, policy):
     # smooth over differences between pyramid 1.2dev and older
-    if hasattr(config, 'set_authentication_policy'):
+    if hasattr(config, 'set_authentication_policy'): # pragma: no cover
         config.set_authentication_policy(policy)
     else: # pragma: no cover
         config._set_authentication_policy(policy)
@@ -455,7 +455,7 @@ def aclauthorizationpolicy(_context):
     # authorization policies must be registered eagerly so they can be
     # found by the view registration machinery
     config = Configurator.with_context(_context)
-    if hasattr(config, 'set_authorization_policy'):
+    if hasattr(config, 'set_authorization_policy'): # pragma: no cover
         # pyramid 1.2dev
         config.set_authorization_policy(policy)
     else: # pragma: no cover
@@ -825,7 +825,7 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
     # while parsing is happening, but we do make sure to commit right
     # after parsing if autocommit it True.
 
-    context = PyramidConfigurationMachine()
+    context = ConfigurationMachine()
     context.registry = self.registry
     context.autocommit = False
     context.route_prefix = getattr(self, 'route_prefix', None)
@@ -850,24 +850,6 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
         self.commit()
 
     return self.registry
-
-class PyramidConfigurationMachine(ConfigurationMachine):
-    autocommit = False
-    route_prefix = None
-
-    def processSpec(self, spec):
-        """Check whether a callable needs to be processed.  The ``spec``
-        refers to a unique identifier for the callable.
-
-        Return True if processing is needed and False otherwise. If
-        the callable needs to be processed, it will be marked as
-        processed, assuming that the caller will procces the callable if
-        it needs to be processed.
-        """
-        if spec in self._seen_files:
-            return False
-        self._seen_files.add(spec)
-        return True
 
 # note that ``options`` is a b/w compat alias for ``settings`` and
 # ``Configurator`` is a testing dep inj
