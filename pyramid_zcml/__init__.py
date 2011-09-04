@@ -822,10 +822,8 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
     # incrementally, configuration outcome will be controlled purely by
     # ZCML directive execution order, which isn't what anyone who uses
     # ZCML expects.  So we don't autocommit each ZCML directive action
-    # while parsing is happening, but we do make sure to pass
-    # execute=self.autocommit to xmlconfig.file below, which will cause
-    # the actions implied by the ZCML that was parsed to be committed
-    # right away once parsing is finished if autocommit is True.
+    # while parsing is happening, but we do make sure to commit right
+    # after parsing if autocommit it True.
 
     context = PyramidConfigurationMachine()
     context.registry = self.registry
@@ -839,7 +837,7 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
 
     try:
         xmlconfig.file(filename, package, context=context,
-                       execute=self.autocommit)
+                       execute=False)
     finally:
         lock.release()
         self.manager.pop()
@@ -848,6 +846,8 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
     if _ctx is None:
         _ctx = self._ctx = self._make_context(self.autocommit)
     _ctx.actions.extend(context.actions)
+    if self.autocommit:
+        self.commit()
 
     return self.registry
 
