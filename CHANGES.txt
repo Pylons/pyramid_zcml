@@ -1,9 +1,11 @@
-Next release
-------------
+0.7 (2011-10-07)
+----------------
 
 - The ZCML includeOverrides directive did not work properly when
   ``pyramid_zcml`` 0.6 was used with Pyramid 1.2.  Symptom: inappropriate
-  ``ConfigurationConflictError`` errors.
+  ``ConfigurationConflictError`` errors.  See the discussion at
+  http://groups.google.com/group/pylons-devel/browse_thread/thread/e9720c67b8388843?hl=en
+  for more information.
 
 0.6 (2011-09-04)
 ----------------
