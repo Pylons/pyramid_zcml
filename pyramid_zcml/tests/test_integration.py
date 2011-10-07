@@ -182,3 +182,19 @@ class TestExceptionViewsApp(IntegrationBase):
         res = self.testapp.get('/route_raise_exception4', status=200)
         self.failUnless('whoa' in res.body)
 
+class TestIncludeOverrideApp(unittest.TestCase):
+    config = 'pyramid_zcml.tests.includeoverrideapp:configure.zcml'
+    def test_it(self):
+        # see http://www.mail-archive.com/zope-dev@zope.org/msg35171.html
+        # for an explanation of why load_zcml of includeoverrideapp's
+        # configure.zcml should raise a ConfigurationConflictError
+        try: # pragma: no cover
+            from pyramid.exceptions import ConfigurationConflictError
+        except ImportError: # pragma: no cover
+            from zope.configuration.config import ConfigurationConflictError
+        from pyramid_zcml import includeme
+        from pyramid.config import Configurator
+        config = Configurator()
+        config.include(includeme)
+        config.load_zcml(self.config)
+        self.assertRaises(ConfigurationConflictError, config.make_wsgi_app)

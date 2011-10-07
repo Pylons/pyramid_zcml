@@ -1,4 +1,5 @@
 import logging
+import sys
 
 logging.basicConfig()
 
@@ -66,8 +67,6 @@ class TestViewDirective(unittest.TestCase):
         self.assertEqual(len(actions), 1)
         discrim = actions[0]['discriminator']
         self.assertEqual(discrim[0], 'view')
-        self.assertTrue(pred1 in discrim)
-        self.assertTrue(pred2 in discrim)
         register = actions[0]['callable']
         register()
         regview = reg.adapters.lookup(
@@ -539,6 +538,9 @@ class TestRouteDirective(unittest.TestCase):
 class TestStaticDirective(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(autocommit=False)
+        package = sys.modules[__name__]
+        self.config.package = package
+        self.config.package_name = package.__name__
 
     def tearDown(self):
         testing.tearDown()
@@ -549,7 +551,6 @@ class TestStaticDirective(unittest.TestCase):
 
     def test_it_with_slash(self):
         self.config.testing_securitypolicy(permissive=False)
-        from pyramid.static import PackageURLParser
         from zope.interface import implementedBy
         try:
             from pyramid.config.views import StaticURLInfo
@@ -560,9 +561,10 @@ class TestStaticDirective(unittest.TestCase):
         from pyramid.interfaces import IRouteRequest
         from pyramid.interfaces import IRoutesMapper
         reg = self.config.registry
+
         context = DummyZCMLContext(self.config)
 
-        self._callFUT(context, 'name', 'fixtures/static',
+        self._callFUT(context, 'name', '',
                       renderer=null_renderer)
         actions = extract_actions(context.actions)
         _execute_actions(actions)
@@ -570,14 +572,15 @@ class TestStaticDirective(unittest.TestCase):
         routes = mapper.get_routes()
         self.assertEqual(len(routes), 1)
         self.assertEqual(routes[0].pattern, 'name/*subpath')
-        self.assertEqual(routes[0].name, 'name/')
+        self.assertTrue('name' in routes[0].name)
 
         iface = implementedBy(StaticURLInfo)
-        request_type = reg.getUtility(IRouteRequest, 'name/')
+        request_type = reg.getUtility(IRouteRequest, routes[0].name)
         view = reg.adapters.lookup(
             (IViewClassifier, request_type, iface), IView, name='')
         request = DummyRequest()
-        self.assertEqual(view(None, request).__class__, PackageURLParser)
+        val = view(None, request).__class__.__name__
+        self.assertTrue(val in ['PackageURLParser', 'HTTPMovedPermanently'])
 
     def test_it_with_nondefault_permission(self):
         from pyramid.exceptions import Forbidden
@@ -600,11 +603,11 @@ class TestStaticDirective(unittest.TestCase):
         routes = mapper.get_routes()
         self.assertEqual(len(routes), 1)
         self.assertEqual(routes[0].pattern, 'name/*subpath')
-        self.assertEqual(routes[0].name, 'name/')
+        self.assertTrue('name' in routes[0].name)
 
 
         iface = implementedBy(StaticURLInfo)
-        request_type = reg.getUtility(IRouteRequest, 'name/')
+        request_type = reg.getUtility(IRouteRequest, routes[0].name)
         view = reg.adapters.lookup(
             (IViewClassifier, request_type, iface), IView, name='')
         request = DummyRequest()
@@ -1257,16 +1260,18 @@ class DummyRoute:
 
 class DummyRequest:
     subpath = ()
+    path_url = ''
+    query_string = ''
     def __init__(self, environ=None):
         if environ is None:
             environ = {}
         self.environ = environ
         self.path_info = environ.get('PATH_INFO', None)
 
-    def get_response(self, app):
+    def get_response(self, app): # pragma: no  cover
         return app
 
-    def copy(self):
+    def copy(self): # pragma: no cover
         return self
 
 class DummyPackage(object):
@@ -1326,7 +1331,7 @@ class DummyConfigurator(object):
 
 class DummyZCMLContext(object):
     def __init__(self, config):
-        if hasattr(config, '_make_context'):
+        if hasattr(config, '_make_context'): # pragma: no cover
             # 1.0, 1.1 b/c
             config._ctx = config._make_context()
         self.registry = config.registry

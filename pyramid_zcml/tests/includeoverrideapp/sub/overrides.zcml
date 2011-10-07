@@ -1,0 +1,12 @@
+<configure xmlns="http://pylonshq.com/pyramid">
+
+  <route
+     path="abc"
+     name="theroute" />
+
+  <view
+     view=".views.theview"
+     route_name="theroute"
+     />
+
+</configure>

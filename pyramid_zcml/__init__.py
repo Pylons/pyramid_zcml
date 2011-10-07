@@ -824,7 +824,6 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
     # ZCML expects.  So we don't autocommit each ZCML directive action
     # while parsing is happening, but we do make sure to commit right
     # after parsing if autocommit it True.
-
     context = ConfigurationMachine()
     context.registry = self.registry
     context.autocommit = False
@@ -836,14 +835,29 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
     lock.acquire()
 
     try:
+        # old_action_state will be None for Pyramid 1.0 and 1.1, but
+        # not for 1.2
+        old_action_state = getattr(self.registry, 'action_state', None)
+        if old_action_state is not None:
+            # For Pyramid 1.2+, we need to assign a temporary action state to
+            # the registry, because the configurator actions must populate
+            # the context's action list (instead of the registry action
+            # state's action list) in order for includeOverrides to work
+            # properly.
+            from pyramid.config import ActionState 
+            self.registry.action_state = ActionState()
+            self.registry.action_state.actions = context.actions
         xmlconfig.file(filename, package, context=context,
                        execute=False)
     finally:
+        if old_action_state is not None:
+            # if we reassigned the action state, restore the old one (1.2 only)
+            self.registry.action_state = old_action_state
         lock.release()
         self.manager.pop()
 
     _ctx = self._ctx
-    if _ctx is None: # will never be true under 1.2a5+
+    if _ctx is None: # pragma: no cover ; will never be true under 1.2a5+
         _ctx = self._ctx = self._make_context(self.autocommit)
     _ctx.actions.extend(context.actions)
     if self.autocommit:
