@@ -564,8 +564,7 @@ class TestStaticDirective(unittest.TestCase):
 
         context = DummyZCMLContext(self.config)
 
-        self._callFUT(context, 'name', '',
-                      renderer=null_renderer)
+        self._callFUT(context, 'name', '', renderer=null_renderer)
         actions = extract_actions(context.actions)
         _execute_actions(actions)
         mapper = reg.getUtility(IRoutesMapper)
@@ -977,6 +976,8 @@ class TestTranslationDirDirective(unittest.TestCase):
         context = DummyZCMLContext(self.config)
         tdir = 'pyramid_zcml.tests.localeapp:locale'
         self._callFUT(context, tdir)
+        actions = extract_actions(context.actions)
+        _execute_actions(actions)
         util = self.config.registry.getUtility(ITranslationDirectories)
         self.assertEqual(util, [expected])
 
@@ -1280,17 +1281,25 @@ class DummyPackage(object):
         self.__file__ = '/__init__.py'
 
 def extract_actions(native):
-    from zope.configuration.config import expand_action
+    try:
+        from pyramid.config import expand_action
+    except ImportError: # pragma: no cover
+        from zope.configuration.config import expand_action
     L = []
     for action in native:
-        (discriminator, callable, args, kw, includepath, info, order
-         ) = expand_action(*action)
-        d = {}
-        d['discriminator'] = discriminator
-        d['callable'] = callable
-        d['args'] = args
-        d['kw'] = kw
-        d['order'] = order
+        if isinstance(action, dict):
+            d = action
+        else: # pragma: no cover
+            d = expand_action(*action)
+            if not isinstance(d, dict):
+                (discriminator, callable, args, kw, includepath, info, order
+                 ) = d[:7]
+                d = {}
+                d['discriminator'] = discriminator
+                d['callable'] = callable
+                d['args'] = args
+                d['kw'] = kw
+                d['order'] = order
         L.append(d)
     return L
         
