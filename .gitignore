@@ -4,6 +4,7 @@ env26/
 *.pyc
 .coverage
 dist/
+build/
 .tox/
 nosetests.xml
 pyramid_zcml/coverage.xml
