@@ -26,7 +26,7 @@ except IOError:
 
 install_requires=[
     'pyramid>=1.0b1', # autktauthenticationpolicy wild_domain
-    'zope.configuration',
+    'zope.configuration>=3.8.0dev', # dict actions
     ]
 
 if platform.system() == 'Java':
@@ -37,7 +37,7 @@ else:
                                        'WebTest', 'venusian']
 
 setup(name='pyramid_zcml',
-      version='0.7',
+      version='0.8dev',
       description='Zope Config Markup Language support for Pyramid',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
