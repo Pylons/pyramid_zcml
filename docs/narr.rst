@@ -1344,6 +1344,49 @@ See :ref:`changing_the_traverser` for more information.
 
 .. _changing_resource_url_zcml:
 
+Using features to make ZCML configurable
+----------------------------------------
+
+Using features you can make :term:`ZCML` somewhat configurable. That is, you
+can exclude or include parts of a :term:`ZCML` configuration using the
+``features`` argument to :func:`pyramid_zcml.load_zcml`. For example:
+
+.. code-block:: python
+   :linenos:
+
+   config.load_zcml('configure.zcml', features=['my_feature'])
+
+With this :term:`ZCML` file:
+
+.. code-block:: xml
+   :linenos:
+
+   <configure
+        xmlns="http://pylonshq.com/pyramid"
+        xmlns:zcml="http://namespaces.zope.org/zcml"
+        >
+
+     <include package="pyramid_zcml" />
+
+     <view
+       view="helloworld.always_configured"
+      />
+
+     <view
+       zcml:condition="not-have my_feature"
+       view="helloworld.hello_world"
+      />
+
+     <view
+       zcml:condition="have my_feature"
+       view="helloworld.alternate_hello_world"
+      />
+
+   </configure>
+
+Will configure the views ``always_configured`` and ``alternate_hello_world``
+but NOT ``hello_world``.
+
 Changing ``resource_url`` URL Generation via ZCML
 -------------------------------------------------
 

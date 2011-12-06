@@ -804,12 +804,16 @@ def _rolledUpFactory(factories):
     factory.factory = factories[0]
     return factory
 
-def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
+def load_zcml(self, spec='configure.zcml', lock=threading.Lock(), features=()):
     """ Load configuration from a :term:`ZCML` file into the
     current configuration state.  The ``spec`` argument is an
     absolute filename, a relative filename, or a :term:`asset
     specification`, defaulting to ``configure.zcml`` (relative to
-    the package of the method's caller)."""
+    the package of the method's caller).
+    
+    The ``features`` argument can be any iterable of strings. These are useful
+    for conditionally including or excluding parts of a :term:`ZCML` file.
+    """
     package_name, filename = self._split_spec(spec)
     if package_name is None: # absolute filename
         package = self.package
@@ -825,6 +829,8 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
     # while parsing is happening, but we do make sure to commit right
     # after parsing if autocommit it True.
     context = ConfigurationMachine()
+    for feature in features:
+        context.provideFeature(feature)
     context.registry = self.registry
     context.autocommit = False
     context.route_prefix = getattr(self, 'route_prefix', None)
