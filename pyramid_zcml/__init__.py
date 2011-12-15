@@ -2,9 +2,6 @@ import os
 import sys
 import threading
 
-from paste.script.templates import Template
-from paste.util.template import paste_script_template_renderer
-
 from zope.configuration.fields import GlobalInterface
 from zope.configuration.fields import GlobalObject
 from zope.configuration.fields import Tokens
@@ -922,18 +919,6 @@ def make_app(root_factory, package=None, filename='configure.zcml',
     config.load_zcml(zcml_file)
     config.end()
     return config.make_wsgi_app()
-
-# paster template helper
-
-class PyramidTemplate(Template):
-    def pre(self, command, output_dir, vars): # pragma: no cover
-        vars['random_string'] = os.urandom(20).encode('hex')
-        return Template.pre(self, command, output_dir, vars)
-
-class StarterZCMLProjectTemplate(PyramidTemplate):
-    _template_dir = 'paster_templates/starter_zcml'
-    summary = 'pyramid starter project (using ZCML)'
-    template_renderer = staticmethod(paste_script_template_renderer)
 
 # includeme function for config.include'ability
 

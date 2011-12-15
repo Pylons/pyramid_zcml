@@ -25,7 +25,7 @@ except IOError:
     README = CHANGES = ''
 
 install_requires=[
-    'pyramid>=1.0b1', # autktauthenticationpolicy wild_domain
+    'pyramid>=1.0.2', # wsgiref paste entry point
     'zope.configuration>=3.8.0dev', # dict actions
     ]
 
@@ -60,8 +60,8 @@ setup(name='pyramid_zcml',
       tests_require = tests_require,
       test_suite="pyramid_zcml",
       entry_points = """
-      [paste.paster_create_template]
-      pyramid_starter_zcml=pyramid_zcml:StarterZCMLProjectTemplate
+      [pyramid.scaffold]
+      pyramid_starter_zcml=pyramid_zcml.scaffolds:StarterZCMLProjectTemplate
       """
       )
 
