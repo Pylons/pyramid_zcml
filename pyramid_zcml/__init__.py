@@ -870,11 +870,11 @@ def make_app(root_factory, package=None, filename='configure.zcml',
     """ Return a Router object, representing a fully configured
     Pyramid WSGI application.
 
-    .. warning:: Use of this function is deprecated as of
-       Pyramid 1.0.  You should instead use a
-       :class:`pyramid.config.Configurator` instance to
-       perform startup configuration as shown in
-       :ref:`configuration_narr`.
+    .. warning::
+
+       Use of this function is deprecated as of Pyramid 1.0.  You should
+       instead use a :class:`pyramid.config.Configurator` instance to perform
+       startup configuration as shown in :ref:`configuration_narr`.
 
     ``root_factory`` must be a callable that accepts a :term:`request`
     object and which returns a traversal root object.  The traversal

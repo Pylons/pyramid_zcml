@@ -605,18 +605,19 @@ the following set of :term:`resource location` results:
 
 - A :term:`view name` equalling ``hello.html``.
 
-.. note:: Values prefixed with a period (``.``) for the ``context``
-   and ``view`` attributes of a ``view`` declaration (such as those
-   above) mean "relative to the Python package directory in which this
-   :term:`ZCML` file is stored".  So if the above ``view`` declaration
-   was made inside a ``configure.zcml`` file that lived in the
-   ``hello`` package, you could replace the relative ``.resources.Hello``
-   with the absolute ``hello.resources.Hello``; likewise you could
-   replace the relative ``.views.hello_world`` with the absolute
-   ``hello.views.hello_world``.  Either the relative or absolute form
-   is functionally equivalent.  It's often useful to use the relative
-   form, in case your package's name changes.  It's also shorter to
-   type.
+.. note::
+
+   Values prefixed with a period (``.``) for the ``context`` and ``view``
+   attributes of a ``view`` declaration (such as those above) mean "relative
+   to the Python package directory in which this :term:`ZCML` file is
+   stored".  So if the above ``view`` declaration was made inside a
+   ``configure.zcml`` file that lived in the ``hello`` package, you could
+   replace the relative ``.resources.Hello`` with the absolute
+   ``hello.resources.Hello``; likewise you could replace the relative
+   ``.views.hello_world`` with the absolute ``hello.views.hello_world``.
+   Either the relative or absolute form is functionally equivalent.  It's
+   often useful to use the relative form, in case your package's name
+   changes.  It's also shorter to type.
 
 You can also declare a *default view callable* for a :term:`resource` type:
 
