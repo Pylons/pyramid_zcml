@@ -37,7 +37,7 @@ else:
                                        'WebTest', 'venusian']
 
 setup(name='pyramid_zcml',
-      version='0.9',
+      version='0.9.1',
       description='Zope Config Markup Language support for Pyramid',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
@@ -60,6 +60,8 @@ setup(name='pyramid_zcml',
       tests_require = tests_require,
       test_suite="pyramid_zcml",
       entry_points = """
+      [paste.paster_create_template]
+      pyramid_starter_zcml=pyramid_zcml.scaffolds:StarterZCMLProjectTemplate
       [pyramid.scaffold]
       pyramid_starter_zcml=pyramid_zcml.scaffolds:StarterZCMLProjectTemplate
       """

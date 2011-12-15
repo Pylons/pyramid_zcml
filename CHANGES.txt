@@ -1,3 +1,8 @@
+0.9.1 (2011-12-14)
+------------------
+
+- Readd mistakenly removed ``paste.paster_create_template`` entry point.
+
 0.9 (2011-12-14)
 ----------------
 
