@@ -42,9 +42,10 @@ Paster Template
 ---------------
 
 The ``pyramid_starter_zcml`` Paster template is included with this package.
-You can use it via ``paster create -t pyramid_starter_zcml``.  It creates a
-package skeleton which configures a Pyramid appliction via ZCML.  The
-application performs URL mapping via :term:`traversal` and no persistence
+You can use it via ``paster create -t pyramid_starter_zcml`` (on Pyramid 1.0,
+1.1, or 1.2) or ``pcreate -s pyramid_starter_zcml`` (on Pyramid 1.3).  It
+creates a package skeleton which configures a Pyramid appliction via ZCML.
+The application performs URL mapping via :term:`traversal` and no persistence
 mechanism.
 
 Usage
