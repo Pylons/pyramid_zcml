@@ -1,4 +1,4 @@
-0.9.2 (2011-02-20)
+0.9.2 (2012-02-20)
 ------------------
 
 - Stop depending on ``pyramid.config.Configurator.with_context``.  Moved
