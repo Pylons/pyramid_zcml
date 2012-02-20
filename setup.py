@@ -37,7 +37,7 @@ else:
                                        'WebTest', 'venusian']
 
 setup(name='pyramid_zcml',
-      version='0.9.1',
+      version='0.9.2',
       description='Zope Config Markup Language support for Pyramid',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
