@@ -809,11 +809,14 @@ def with_context(context):
         package=context.package,
         autocommit=context.autocommit,
         )
-    configurator.route_prefix = context.route_prefix
-    configurator.introspection = context.introspection
     configurator.basepath = context.basepath
     configurator.includepath = context.includepath
     configurator.info = context.info
+    configurator.route_prefix = context.route_prefix
+    configurator.introspection = context.introspection
+    if hasattr(configurator, '_make_context'): # pragma: no cover
+        # 1.0, 1.1 b/c
+        configurator._ctx = context
     return configurator
 
 def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
