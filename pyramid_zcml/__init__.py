@@ -176,7 +176,7 @@ def view(
     ):
 
     context = context or for_
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     config.add_view(
         permission=permission, context=context, view=view, name=name,
         request_type=request_type, route_name=route_name,
@@ -278,7 +278,7 @@ def route(_context,
     if pattern is None:
         raise ConfigurationError('route directive must include a "pattern"')
 
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     if view:
         config.add_view(
             route_name=name,
@@ -330,7 +330,7 @@ def notfound(_context,
              renderer=None,
              wrapper=None):
 
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     config.set_notfound_view(view=view, attr=attr, renderer=renderer,
                              wrapper=wrapper)
 
@@ -341,7 +341,7 @@ def forbidden(_context,
              renderer=None,
              wrapper=None):
 
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     config.set_forbidden_view(view=view, attr=attr, renderer=renderer,
                              wrapper=wrapper)
 
@@ -361,7 +361,7 @@ class IAssetDirective(Interface):
         required=True)
 
 def asset(_context, to_override, override_with, _override=None):
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     config.override_asset(to_override, override_with, _override=_override)
 
 def set_authentication_policy(config, policy):
@@ -382,7 +382,7 @@ def repozewho1authenticationpolicy(_context, identifier_name='auth_tkt',
                                             callback=callback)
     # authentication policies must be registered eagerly so they can
     # be found by the view registration machinery
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     set_authentication_policy(config, policy)
 
 class IRemoteUserAuthenticationPolicyDirective(Interface):
@@ -396,7 +396,7 @@ def remoteuserauthenticationpolicy(_context, environ_key='REMOTE_USER',
                                             callback=callback)
     # authentication policies must be registered eagerly so they can
     # be found by the view registration machinery
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     set_authentication_policy(config, policy)
 
 class IAuthTktAuthenticationPolicyDirective(Interface):
@@ -441,7 +441,7 @@ def authtktauthenticationpolicy(_context,
         raise ConfigurationError(str(why))
     # authentication policies must be registered eagerly so they can
     # be found by the view registration machinery
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     set_authentication_policy(config, policy)
 
 class IACLAuthorizationPolicyDirective(Interface):
@@ -451,7 +451,7 @@ def aclauthorizationpolicy(_context):
     policy = ACLAuthorizationPolicy()
     # authorization policies must be registered eagerly so they can be
     # found by the view registration machinery
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     if hasattr(config, 'set_authorization_policy'): # pragma: no cover
         # pyramid 1.2dev
         config.set_authorization_policy(policy)
@@ -470,7 +470,7 @@ class IRendererDirective(Interface):
 def renderer(_context, factory, name=''):
     # renderer factories must be registered eagerly so they can be
     # found by the view machinery
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     config.add_renderer(name, factory)
 
 class IStaticDirective(Interface):
@@ -502,7 +502,7 @@ def static(_context, name, path, cache_max_age=3600,
            renderer=None):
     """ Handle ``static`` ZCML directives
     """
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     config.add_static_view(name, path, cache_max_age=cache_max_age,
                            permission=permission, renderer=renderer)
 
@@ -513,7 +513,7 @@ class IScanDirective(Interface):
         )
 
 def scan(_context, package):
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     config.scan(package)
 
 class ITranslationDirDirective(Interface):
@@ -525,7 +525,7 @@ class ITranslationDirDirective(Interface):
 
 def translationdir(_context, dir):
     path = path_spec(_context, dir)
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     config.add_translation_dirs(path)
 
 class ILocaleNegotiatorDirective(Interface):
@@ -536,7 +536,7 @@ class ILocaleNegotiatorDirective(Interface):
         )
 
 def localenegotiator(_context, negotiator):
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     config.set_locale_negotiator(negotiator)
 
 class IAdapterDirective(Interface):
@@ -675,7 +675,7 @@ def subscriber(_context, for_=None, factory=None, handler=None, provides=None):
 
     for_ = tuple(for_)
 
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
 
     if handler is not None:
         config.add_subscriber(handler, for_)
@@ -762,7 +762,7 @@ def default_permission(_context, name):
     """ Register a default permission name """
     # the default permission must be registered eagerly so it can
     # be found by the view registration machinery
-    config = Configurator.with_context(_context)
+    config = with_context(_context)
     config.set_default_permission(name)
 
 def path_spec(context, path):
@@ -801,6 +801,21 @@ def _rolledUpFactory(factories):
     factory.factory = factories[0]
     return factory
 
+def with_context(context):
+    """Obtain a configurator with 'the right' context.  Returns a new
+    Configurator instance."""
+    configurator = context.config_class(
+        registry=context.registry,
+        package=context.package,
+        autocommit=context.autocommit,
+        )
+    configurator.route_prefix = context.route_prefix
+    configurator.introspection = context.introspection
+    configurator.basepath = context.basepath
+    configurator.includepath = context.includepath
+    configurator.info = context.info
+    return configurator
+
 def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
     """ Load configuration from a :term:`ZCML` file into the
     current configuration state.  The ``spec`` argument is an
@@ -824,8 +839,10 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
     context = ConfigurationMachine()
     context.registry = self.registry
     context.autocommit = False
-    context.route_prefix = getattr(self, 'route_prefix', None)
     context.package = package
+    context.route_prefix = getattr(self, 'route_prefix', None)
+    context.introspection = getattr(self, 'introspection', True)
+    context.config_class = self.__class__
     registerCommonDirectives(context)
 
     self.manager.push({'registry':self.registry, 'request':None})
@@ -844,8 +861,7 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
             from pyramid.config import ActionState 
             self.registry.action_state = ActionState()
             self.registry.action_state.actions = context.actions
-        xmlconfig.file(filename, package, context=context,
-                       execute=False)
+        xmlconfig.file(filename, package, context=context, execute=False)
     finally:
         if old_action_state is not None:
             # if we reassigned the action state, restore the old one (1.2 only)

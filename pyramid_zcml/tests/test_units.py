@@ -1253,6 +1253,32 @@ class TestMakeApp(unittest.TestCase):
                             Configurator=DummyConfigurator)
         self.assertEqual(app.zcml_file, '2.zcml')
 
+class Test_with_context(unittest.TestCase):
+    def test_with_context(self):
+        from pyramid_zcml import with_context
+        class Dummy(object):
+            def __init__(self, **kw):
+                self.__dict__.update(kw)
+        context = Dummy()
+        context.basepath = 'basepath'
+        context.includepath = ('spec',)
+        context.package = 'pyramid'
+        context.autocommit = True
+        context.registry = 'abc'
+        context.route_prefix = 'buz'
+        context.introspection = True
+        context.info = 'info'
+        context.config_class = Dummy
+        newconfig = with_context(context)
+        self.assertEqual(newconfig.package, 'pyramid')
+        self.assertEqual(newconfig.autocommit, True)
+        self.assertEqual(newconfig.registry, 'abc')
+        self.assertEqual(newconfig.route_prefix, 'buz')
+        self.assertEqual(newconfig.basepath, 'basepath')
+        self.assertEqual(newconfig.includepath, ('spec',))
+        self.assertEqual(newconfig.info, 'info')
+        self.assertEqual(newconfig.introspection, True)
+
 class Dummy:
     pass
 
@@ -1351,7 +1377,9 @@ class DummyZCMLContext(object):
         self.includepath = getattr(config, 'includepath', ())
         self.info = getattr(config, 'info', '')
         self.actions = config._ctx.actions
+        self.introspection = True
         self._ctx = config._ctx
+        self.config_class = config.__class__
 
     def action(self, *arg, **kw):
         self._ctx.action(*arg, **kw)
@@ -1361,3 +1389,4 @@ def _execute_actions(actions):
         if 'callable' in action:
             if action['callable']:
                 action['callable']()
+
