@@ -163,7 +163,7 @@ def view(
     attr=None,
     renderer=None,
     wrapper=None,
-    xhr=False,
+    xhr=None,
     accept=None,
     header=None,
     path_info=None,
