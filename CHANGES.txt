@@ -1,7 +1,9 @@
-0.9.3 (unreleased)
-------------------
+0.10.0 (unreleased)
+-------------------
 
-- Fix for xhr predicate behaviour: ignore when no xhr value is specified
+- Fix for ``xhr`` predicate behaviour: ignore when no ``xh``r value specified.
+
+- Drop support for Python 2.5, Jython.
 
 0.9.2 (2012-02-20)
 ------------------
