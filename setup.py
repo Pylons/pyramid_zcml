@@ -25,19 +25,19 @@ except IOError:
     README = CHANGES = ''
 
 install_requires=[
-    'pyramid>=1.0.2', # wsgiref paste entry point
+    'pyramid>=1.4dev', # various b/w compat choices
     'zope.configuration>=3.8.0dev', # dict actions
     ]
 
 if platform.system() == 'Java':
     tests_require = install_requires + ['WebTest', 'venusian']
 else:
-    tests_require= install_requires + ['Sphinx', 'docutils', 
-                                       'repoze.sphinx.autointerface',
-                                       'WebTest', 'venusian']
+    tests_require = install_requires + ['Sphinx', 'docutils', 
+                                        'repoze.sphinx.autointerface',
+                                        'WebTest', 'venusian']
 
 setup(name='pyramid_zcml',
-      version='0.9.2',
+      version='0.10dev',
       description='Zope Config Markup Language support for Pyramid',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[

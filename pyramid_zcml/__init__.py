@@ -366,10 +366,7 @@ def asset(_context, to_override, override_with, _override=None):
 
 def set_authentication_policy(config, policy):
     # smooth over differences between pyramid 1.2dev and older
-    if hasattr(config, 'set_authentication_policy'): # pragma: no cover
-        config.set_authentication_policy(policy)
-    else: # pragma: no cover
-        config._set_authentication_policy(policy)
+    config.set_authentication_policy(policy)
 
 class IRepozeWho1AuthenticationPolicyDirective(Interface):
     identifier_name = TextLine(title=u'identitfier_name', required=False,
@@ -452,11 +449,7 @@ def aclauthorizationpolicy(_context):
     # authorization policies must be registered eagerly so they can be
     # found by the view registration machinery
     config = with_context(_context)
-    if hasattr(config, 'set_authorization_policy'): # pragma: no cover
-        # pyramid 1.2dev
-        config.set_authorization_policy(policy)
-    else: # pragma: no cover
-        config._set_authorization_policy(policy)
+    config.set_authorization_policy(policy)
 
 class IRendererDirective(Interface):
     factory = GlobalObject(
@@ -608,11 +601,8 @@ def adapter(_context, factory, provides=None, for_=None, name=''):
     else:
         factory = _rolledUpFactory(factories)
     
-    try:
-        registry = _context.registry
-    except AttributeError: # pragma: no cover (b/c)
-        registry = get_current_registry()
-        
+    registry = _context.registry
+
     _context.action(
         discriminator = ('adapter', for_, provides, name),
         callable = registry.registerAdapter,
@@ -743,11 +733,8 @@ def utility(_context, provides=None, component=None, factory=None, name=''):
         # so if we don't need it, we don't pass it
         kw = {}
 
-    try:
-        registry = _context.registry
-    except AttributeError: # pragma: no cover (b/c)
-        registry = get_current_registry()
-        
+    registry = _context.registry
+ 
     _context.action(
         discriminator = ('utility', provides, name),
         callable = registry.registerUtility,
@@ -814,9 +801,6 @@ def with_context(context):
     configurator.info = context.info
     configurator.route_prefix = context.route_prefix
     configurator.introspection = context.introspection
-    if hasattr(configurator, '_make_context'): # pragma: no cover
-        # 1.0, 1.1 b/c
-        configurator._ctx = context
     return configurator
 
 def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
@@ -872,10 +856,7 @@ def load_zcml(self, spec='configure.zcml', lock=threading.Lock()):
         lock.release()
         self.manager.pop()
 
-    _ctx = self._ctx
-    if _ctx is None: # pragma: no cover ; will never be true under 1.2a5+
-        _ctx = self._ctx = self._make_context(self.autocommit)
-    _ctx.actions.extend(context.actions)
+    self._ctx.actions.extend(context.actions)
     if self.autocommit:
         self.commit()
 

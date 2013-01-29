@@ -6,14 +6,7 @@ logging.basicConfig()
 import unittest
 
 from pyramid import testing
-
-try:
-    # pyramid 1.1
-    from pyramid.renderers import null_renderer
-except ImportError: # pragma: no cover
-    # pyramid 1.0
-    null_renderer = None
-
+from pyramid.renderers import null_renderer
 from zope.interface import Interface
 from zope.interface import implements
 

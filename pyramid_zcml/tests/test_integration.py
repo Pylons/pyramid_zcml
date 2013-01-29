@@ -188,10 +188,7 @@ class TestIncludeOverrideApp(unittest.TestCase):
         # see http://www.mail-archive.com/zope-dev@zope.org/msg35171.html
         # for an explanation of why load_zcml of includeoverrideapp's
         # configure.zcml should raise a ConfigurationConflictError
-        try: # pragma: no cover
-            from pyramid.exceptions import ConfigurationConflictError
-        except ImportError: # pragma: no cover
-            from zope.configuration.config import ConfigurationConflictError
+        from pyramid.exceptions import ConfigurationConflictError
         from pyramid_zcml import includeme
         from pyramid.config import Configurator
         config = Configurator()
