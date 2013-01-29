@@ -1,6 +1,8 @@
 0.10.0 (unreleased)
 -------------------
 
+- Add support for Python 3.2 and 3.3.
+
 - Drop support for Pyramid < 1.4.
 
 - Fix for ``xhr`` predicate behaviour: ignore when no ``xh``r value specified.

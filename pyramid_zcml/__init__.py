@@ -28,122 +28,129 @@ from pyramid.threadlocal import get_current_registry
 
 from zope.configuration import xmlconfig
 
+from pyramid_zcml._compat import u
+
+_BLANK = u('')
+
 ###################### directives ##########################
 
 class IViewDirective(Interface):
     context = GlobalObject(
-        title=u"The interface or class this view is for.",
+        title=u('The interface or class this view is for.'),
         required=False
         )
 
     for_ = GlobalObject(
-        title=(u"The interface or class this view is for (alternate spelling "
-               "of ``context``)."),
+        title=u('The interface or class this view is for (alternate spelling '
+                'of ``context``).'),
         required=False
         )
 
     permission = TextLine(
-        title=u"Permission",
-        description=u"The permission needed to use the view.",
+        title=u('Permission'),
+        description=u('The permission needed to use the view.'),
         required=False
         )
 
     view = GlobalObject(
-        title=u"",
-        description=u"The view function",
+        title=_BLANK,
+        description=u('The view function'),
         required=False,
         )
 
     name = TextLine(
-        title=u"The name of the view",
-        description=u"""
-        The name shows up in URLs/paths. For example 'foo' or 'foo.html'.""",
+        title=u('The name of the view'),
+        description=u(
+            'Shows up in URLs/paths. For example "foo" or "foo.html".'),
         required=False,
         )
 
     attr = TextLine(
-        title=u'The callable attribute of the view object(default is __call__)',
-        description=u'',
+        title=u(
+            'The callable attribute of the view object(default is __call__)'),
+        description=_BLANK,
         required=False)
 
     renderer = TextLine(
-        title=u'The renderer asssociated with the view',
-        description=u'',
+        title=u('The renderer asssociated with the view'),
+        description=_BLANK,
         required=False)
 
     wrapper = TextLine(
-        title = u'The *name* of the view that acts as a wrapper for this view.',
-        description = u'',
+        title = u(
+            'The *name* of the view that acts as a wrapper for this view.'),
+        description = _BLANK,
         required=False)
 
     request_type = GlobalObject(
-        title=u"The dotted name interface for the request type",
-        description=(u"The view will be called if the interface represented by "
-                     u"'request_type' is implemented by the request.  The "
-                     u"default request type is pyramid.interfaces.IRequest"),
+        title=u('The dotted name interface for the request type'),
+        description=u('The view will be called if the interface represented by '
+                      '"request_type" is implemented by the request.  The '
+                      'default request type is pyramid.interfaces.IRequest'),
         required=False
         )
 
     route_name = TextLine(
-        title = u'The route that must match for this view to be used',
+        title = u('The route that must match for this view to be used'),
         required = False)
 
     containment = GlobalObject(
-        title = u'Dotted name of a containment class or interface',
+        title = u('Dotted name of a containment class or interface'),
         required=False)
 
     request_method = TextLine(
-        title = u'Request method name that must be matched (e.g. GET/POST)',
-        description = (u'The view will be called if and only if the request '
-                       'method (``request.method``) matches this string.'),
+        title = u('Request method name that must be matched (e.g. GET/POST)'),
+        description = u('The view will be called if and only if the request '
+                        'method (``request.method``) matches this string.'),
         required=False)
 
     request_param = TextLine(
-        title = (u'Request parameter name that must exist in '
+        title = u('Request parameter name that must exist in '
                  '``request.params`` for this view to match'),
-        description = (u'The view will be called if and only if the request '
+        description = u('The view will be called if and only if the request '
                        'parameter exists which matches this string.'),
         required=False)
 
     xhr = Bool(
-        title = (u'True if request has an X-Requested-With header with the '
+        title = u('True if request has an X-Requested-With header with the '
                  'value "XMLHttpRequest"'),
-        description=(u'Useful for detecting AJAX requests issued from '
+        description=u('Useful for detecting AJAX requests issued from '
                      'jQuery, Protoype and other JavaScript libraries'),
         required=False)
 
     accept = TextLine(
-        title = (u'Mimetype(s) that must be present in "Accept" HTTP header '
+        title = u('Mimetype(s) that must be present in "Accept" HTTP header '
                  'for the view to match a request'),
-        description=(u'Accepts a mimetype match token in the form '
+        description=u('Accepts a mimetype match token in the form '
                      '"text/plain", a wildcard mimetype match token in the '
                      'form "text/*" or a match-all wildcard mimetype match '
                      'token in the form "*/*".'),
         required = False)
 
     header = TextLine(
-        title=u'Header name/value pair in the form "name=<regex>"',
-        description=u'Regular expression matching for header values',
+        title=u('Header name/value pair in the form "name=<regex>"'),
+        description=u('Regular expression matching for header values'),
         required = False)
 
     path_info = TextLine(
-        title = (u'Regular expression which must match the ``PATH_INFO`` '
+        title = u('Regular expression which must match the ``PATH_INFO`` '
                  'header for the view to match a request'),
-        description=(u'Accepts a regular expression.'),
+        description=u('Accepts a regular expression.'),
         required = False)
 
     decorator = GlobalObject(
-        title = u'View decorator',
+        title = u('View decorator'),
         required = False)
 
     mapper = GlobalObject(
-        title = u'View mapper',
+        title = u('View mapper'),
         required = False)
 
     custom_predicates = Tokens(
-        title=u"One or more custom dotted names to custom predicate callables",
-        description=(u"A list of dotted name references to callables that "
-                     "will be used as predicates for this view configuration"),
+        title=u(
+            "One or more custom dotted names to custom predicate callables"),
+        description=u('A list of dotted name references to callables that '
+                      'will be used as predicates for this view configuration'),
         required=False,
         value_type=GlobalObject()
         )
@@ -191,50 +198,51 @@ _view = view # for directives that take a view arg
 class IRouteLikeDirective(Interface):
     """ The interface for the ``route`` ZCML directive
     """
-    pattern = TextLine(title=u'pattern', required=False)
-    factory = GlobalObject(title=u'context factory', required=False)
-    view = GlobalObject(title=u'view', required=False)
+    pattern = TextLine(title=u('pattern'), required=False)
+    factory = GlobalObject(title=u('context factory'), required=False)
+    view = GlobalObject(title=u('view'), required=False)
 
-    view_context = GlobalObject(title=u'view_context', required=False)
+    view_context = GlobalObject(title=u('view_context'), required=False)
     # aliases for view_context
-    for_ = GlobalObject(title=u'for', required=False)
-    view_for = GlobalObject(title=u'view_for', required=False)
+    for_ = GlobalObject(title=u('for'), required=False)
+    view_for = GlobalObject(title=u('view_for'), required=False)
 
-    view_permission = TextLine(title=u'view_permission', required=False)
+    view_permission = TextLine(title=u('view_permission'), required=False)
     # alias for view_permission
-    permission = TextLine(title=u'permission', required=False)
+    permission = TextLine(title=u('permission'), required=False)
 
-    view_renderer = TextLine(title=u'view_renderer', required=False)
+    view_renderer = TextLine(title=u('view_renderer'), required=False)
     # alias for view_renderer
-    renderer = TextLine(title=u'renderer', required=False)
+    renderer = TextLine(title=u('renderer'), required=False)
 
-    view_attr = TextLine(title=u'view_attr', required=False)
+    view_attr = TextLine(title=u('view_attr'), required=False)
 
-    request_method = TextLine(title=u'request_method', required=False)
-    request_param = TextLine(title=u'request_param', required=False)
-    header = TextLine(title=u'header', required=False)
-    accept = TextLine(title=u'accept', required=False)
-    xhr = Bool(title=u'xhr', required=False)
-    path_info = TextLine(title=u'path_info', required=False)
+    request_method = TextLine(title=u('request_method'), required=False)
+    request_param = TextLine(title=u('request_param'), required=False)
+    header = TextLine(title=u('header'), required=False)
+    accept = TextLine(title=u('accept'), required=False)
+    xhr = Bool(title=u('xhr'), required=False)
+    path_info = TextLine(title=u('path_info'), required=False)
 
     traverse = TextLine(
-        title=u'Traverse pattern"',
-        description=u'A pattern which will compose a traversal path',
+        title=u('Traverse pattern'),
+        description=u('A pattern which will compose a traversal path'),
         required = False)
 
     custom_predicates = Tokens(
-        title=u"One or more custom dotted names to custom predicate callables",
-        description=(u"A list of dotted name references to callables that "
-                     "will be used as predicates for this view configuration"),
+        title=u(
+            "One or more custom dotted names to custom predicate callables"),
+        description=u('A list of dotted name references to callables that '
+                      'will be used as predicates for this view configuration'),
         required=False,
         value_type=GlobalObject()
         )
-    use_global_views = Bool(title=u'use_global_views', required=False)
+    use_global_views = Bool(title=u('use_global_views'), required=False)
 
 class IRouteDirective(IRouteLikeDirective):
-    name = TextLine(title=u'name', required=True)
+    name = TextLine(title=u('name'), required=True)
     # alias for pattern
-    path = TextLine(title=u'path', required=False)
+    path = TextLine(title=u('path'), required=False)
 
 def route(_context,
           name,
@@ -304,24 +312,26 @@ def route(_context,
 
 class ISystemViewDirective(Interface):
     view = GlobalObject(
-        title=u"",
-        description=u"The view function",
+        title=_BLANK,
+        description=u('The view function'),
         required=False,
         )
 
     attr = TextLine(
-        title=u'The callable attribute of the view object(default is __call__)',
-        description=u'',
+        title=u(
+            'The callable attribute of the view object(default is __call__)'),
+        description=_BLANK,
         required=False)
 
     renderer = TextLine(
-        title=u'The renderer asssociated with the view',
-        description=u'',
+        title=u('The renderer asssociated with the view'),
+        description=_BLANK,
         required=False)
 
     wrapper = TextLine(
-        title = u'The *name* of the view that acts as a wrapper for this view.',
-        description = u'',
+        title = u(
+            'The *name* of the view that acts as a wrapper for this view.'),
+        description = _BLANK,
         required=False)
 
 def notfound(_context,
@@ -352,12 +362,12 @@ class IAssetDirective(Interface):
     another package.
     """
     to_override = TextLine(
-        title=u"Override spec",
-        description=u'The spec of the asset to override.',
+        title=u('Override spec'),
+        description=u('The spec of the asset to override.'),
         required=True)
     override_with = TextLine(
-        title=u"With spec",
-        description=u"The spec of the asset providing the override.",
+        title=u('With spec'),
+        description=u('The spec of the asset providing the override.'),
         required=True)
 
 def asset(_context, to_override, override_with, _override=None):
@@ -369,9 +379,9 @@ def set_authentication_policy(config, policy):
     config.set_authentication_policy(policy)
 
 class IRepozeWho1AuthenticationPolicyDirective(Interface):
-    identifier_name = TextLine(title=u'identitfier_name', required=False,
-                               default=u'auth_tkt')
-    callback = GlobalObject(title=u'callback', required=False)
+    identifier_name = TextLine(title=u('identitfier_name'), required=False,
+                               default=u('auth_tkt'))
+    callback = GlobalObject(title=u('callback'), required=False)
 
 def repozewho1authenticationpolicy(_context, identifier_name='auth_tkt',
                                    callback=None):
@@ -383,9 +393,9 @@ def repozewho1authenticationpolicy(_context, identifier_name='auth_tkt',
     set_authentication_policy(config, policy)
 
 class IRemoteUserAuthenticationPolicyDirective(Interface):
-    environ_key = TextLine(title=u'environ_key', required=False,
-                           default=u'REMOTE_USER')
-    callback = GlobalObject(title=u'callback', required=False)
+    environ_key = TextLine(title=u('environ_key'), required=False,
+                           default=u('REMOTE_USER'))
+    callback = GlobalObject(title=u('callback'), required=False)
 
 def remoteuserauthenticationpolicy(_context, environ_key='REMOTE_USER',
                                    callback=None):
@@ -397,18 +407,18 @@ def remoteuserauthenticationpolicy(_context, environ_key='REMOTE_USER',
     set_authentication_policy(config, policy)
 
 class IAuthTktAuthenticationPolicyDirective(Interface):
-    secret = TextLine(title=u'secret', required=True)
-    callback = GlobalObject(title=u'callback', required=False)
-    cookie_name = ASCIILine(title=u'cookie_name', required=False,
+    secret = TextLine(title=u('secret'), required=True)
+    callback = GlobalObject(title=u('callback'), required=False)
+    cookie_name = ASCIILine(title=u('cookie_name'), required=False,
                             default='auth_tkt')
-    secure = Bool(title=u"secure", required=False, default=False)
-    include_ip = Bool(title=u"include_ip", required=False, default=False)
-    timeout = Int(title=u"timeout", required=False, default=None)
-    reissue_time = Int(title=u"reissue_time", required=False, default=None)
-    max_age = Int(title=u"max_age", required=False, default=None)
-    path = ASCIILine(title=u"path", required=False, default='/')
-    http_only = Bool(title=u"http_only", required=False, default=False)
-    wild_domain = Bool(title=u"wild_domain", required=False, default=True)
+    secure = Bool(title=u('secure'), required=False, default=False)
+    include_ip = Bool(title=u('include_ip'), required=False, default=False)
+    timeout = Int(title=u('timeout'), required=False, default=None)
+    reissue_time = Int(title=u('reissue_time'), required=False, default=None)
+    max_age = Int(title=u('max_age'), required=False, default=None)
+    path = ASCIILine(title=u('path'), required=False, default='/')
+    http_only = Bool(title=u('http_only'), required=False, default=False)
+    wild_domain = Bool(title=u('wild_domain'), required=False, default=True)
 
 def authtktauthenticationpolicy(_context,
                                 secret,
@@ -434,7 +444,7 @@ def authtktauthenticationpolicy(_context,
                                              http_only=http_only,
                                              path=path,
                                              wild_domain=wild_domain)
-    except ValueError, why: # pragma: no cover
+    except ValueError as why: # pragma: no cover
         raise ConfigurationError(str(why))
     # authentication policies must be registered eagerly so they can
     # be found by the view registration machinery
@@ -453,11 +463,11 @@ def aclauthorizationpolicy(_context):
 
 class IRendererDirective(Interface):
     factory = GlobalObject(
-        title=u'IRendererFactory implementation',
+        title=u('IRendererFactory implementation'),
         required=True)
 
     name = TextLine(
-        title=u'Token (e.g. ``json``) or filename extension (e.g. ".pt")',
+        title=u('Token (e.g. ``json``) or filename extension (e.g. ".pt")'),
         required=False)
 
 def renderer(_context, factory, name=''):
@@ -468,26 +478,27 @@ def renderer(_context, factory, name=''):
 
 class IStaticDirective(Interface):
     name = TextLine(
-        title=u"The URL prefix of the static view",
-        description=u"""
-        The directory will be served up for the route that starts with
-        this prefix.""",
+        title=u('The URL prefix of the static view'),
+        description=u(
+            'The directory will be served up for the route that starts with '
+            'this prefix.'),
         required=True)
 
     path = TextLine(
-        title=u'Path to the directory which contains assets',
-        description=u'May be package-relative by using a colon to '
-        'separate package name and path relative to the package directory.',
+        title=u('Path to the directory which contains assets'),
+        description=u(
+            'May be package-relative by using a colon to separate package '
+            'name and path relative to the package directory.'),
         required=True)
 
     cache_max_age = Int(
-        title=u"Cache maximum age in seconds",
+        title=u('Cache maximum age in seconds'),
         required=False,
         default=None)
 
     permission = TextLine(
-        title=u'Permission string',
-        description = u'The permission string',
+        title=u('Permission string'),
+        description = u('The permission string'),
         required = False)
 
 def static(_context, name, path, cache_max_age=3600,
@@ -501,7 +512,7 @@ def static(_context, name, path, cache_max_age=3600,
 
 class IScanDirective(Interface):
     package = GlobalObject(
-        title=u"The package we'd like to scan.",
+        title=u('The package we would like to scan.'),
         required=True,
         )
 
@@ -511,8 +522,7 @@ def scan(_context, package):
 
 class ITranslationDirDirective(Interface):
     dir = TextLine(
-        title=u"Add a translation directory",
-        description=(u"Add a translation directory"),
+        title=u('Add a translation directory'),
         required=True,
         )
 
@@ -523,8 +533,7 @@ def translationdir(_context, dir):
 
 class ILocaleNegotiatorDirective(Interface):
     negotiator = GlobalObject(
-        title=u"Configure a locale negotiator",
-        description=(u'Configure a locale negotiator'),
+        title=u('Configure a locale negotiator'),
         required=True,
         )
 
@@ -538,23 +547,24 @@ class IAdapterDirective(Interface):
     """
 
     factory = Tokens(
-        title=u"Adapter factory/factories",
-        description=(u"A list of factories (usually just one) that create"
-                     " the adapter instance."),
+        title=u('Adapter factory/factories'),
+        description=(u(
+            'A list of factories (usually just one) that create '
+            'the adapter instance.')),
         required=True,
         value_type=GlobalObject()
         )
 
     provides  = GlobalInterface(
-        title=u"Interface the component provides",
-        description=(u"This attribute specifies the interface the adapter"
-                     " instance must provide."),
+        title=u('Interface the component provides'),
+        description=(u('This attribute specifies the interface the adapter '
+                       'instance must provide.')),
         required=False,
         )
 
     for_ = Tokens(
-        title=u"Specifications to be adapted",
-        description=u"This should be a list of interfaces or classes",
+        title=u('Specifications to be adapted'),
+        description=u('This should be a list of interfaces or classes'),
         required=False,
         value_type=GlobalObject(
           missing_value=object(),
@@ -562,10 +572,10 @@ class IAdapterDirective(Interface):
         )
 
     name = TextLine(
-        title=u"Name",
-        description=(u"Adapters can have names.\n\n"
-                     "This attribute allows you to specify the name for"
-                     " this adapter."),
+        title=u('Name'),
+        description=(u('Adapters can have names.\n\n'
+                       'This attribute allows you to specify the name for '
+                       'this adapter.')),
         required=False,
         )
 
@@ -615,27 +625,27 @@ class ISubscriberDirective(Interface):
     """
 
     factory = GlobalObject(
-        title=u"Subscriber factory",
-        description=u"A factory used to create the subscriber instance.",
+        title=u('Subscriber factory'),
+        description=u('A factory used to create the subscriber instance.'),
         required=False,
         )
 
     handler = GlobalObject(
-        title=u"Handler",
-        description=u"A callable object that handles events.",
+        title=u('Handler'),
+        description=u('A callable object that handles events.'),
         required=False,
         )
 
     provides = GlobalInterface(
-        title=u"Interface the component provides",
-        description=(u"This attribute specifies the interface the adapter"
-                     " instance must provide."),
+        title=u('Interface the component provides'),
+        description=u('This attribute specifies the interface the adapter '
+                      'instance must provide.'),
         required=False,
         )
 
     for_ = Tokens(
-        title=u"Interfaces or classes that this subscriber depends on",
-        description=u"This should be a list of interfaces or classes",
+        title=u('Interfaces or classes that this subscriber depends on'),
+        description=u('This should be a list of interfaces or classes'),
         required=False,
         value_type=GlobalObject(
           missing_value = object(),
@@ -681,34 +691,34 @@ class IUtilityDirective(Interface):
     """Register a utility."""
 
     component = GlobalObject(
-        title=u"Component to use",
-        description=(u"Python name of the implementation object.  This"
-                     " must identify an object in a module using the"
-                     " full dotted name.  If specified, the"
-                     " ``factory`` field must be left blank."),
+        title=u('Component to use'),
+        description=(u('Python name of the implementation object.  This '
+                     'must identify an object in a module using the '
+                     'full dotted name.  If specified, the '
+                     '``factory`` field must be left blank.')),
         required=False,
         )
 
     factory = GlobalObject(
-        title=u"Factory",
-        description=(u"Python name of a factory which can create the"
-                     " implementation object.  This must identify an"
-                     " object in a module using the full dotted name."
-                     " If specified, the ``component`` field must"
-                     " be left blank."),
+        title=u('Factory'),
+        description=(u('Python name of a factory which can create the '
+                      'implementation object.  This must identify an '
+                      'object in a module using the full dotted name. '
+                      'If specified, the ``component`` field must '
+                      'be left blank.')),
         required=False,
         )
 
     provides = GlobalInterface(
-        title=u"Provided interface",
-        description=u"Interface provided by the utility.",
+        title=u('Provided interface'),
+        description=u('Interface provided by the utility.'),
         required=False,
         )
 
     name = TextLine(
-        title=u"Name",
-        description=(u"Name of the registration.  This is used by"
-                     " application code when locating a utility."),
+        title=u('Name'),
+        description=(u('Name of the registration.  This is used by '
+                       'application code when locating a utility.')),
         required=False,
         )
 
@@ -743,7 +753,7 @@ def utility(_context, provides=None, component=None, factory=None, name=''):
         )
 
 class IDefaultPermissionDirective(Interface):
-    name = TextLine(title=u'name', required=True)
+    name = TextLine(title=u('name'), required=True)
 
 def default_permission(_context, name):
     """ Register a default permission name """

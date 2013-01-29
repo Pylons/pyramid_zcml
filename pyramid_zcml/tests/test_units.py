@@ -8,7 +8,7 @@ import unittest
 from pyramid import testing
 from pyramid.renderers import null_renderer
 from zope.interface import Interface
-from zope.interface import implements
+from zope.interface import implementer
 
 class TestViewDirective(unittest.TestCase):
     def setUp(self):
@@ -40,7 +40,7 @@ class TestViewDirective(unittest.TestCase):
         _execute_actions(actions)
         regview = reg.adapters.lookup(
             (IViewClassifier, IRequest, IDummy), IView, name='')
-        self.assertEqual(regview(None, None).body, 'OK')
+        self.assertEqual(regview(None, None).body, b'OK')
 
     def test_with_custom_predicates(self):
         from pyramid.interfaces import IView
@@ -160,6 +160,7 @@ class TestNotFoundDirective(unittest.TestCase):
         from pyramid.exceptions import NotFound
         from pyramid.config import Configurator
         from pyramid.registry import undefer
+        from pyramid_zcml._compat import b
         reg = self.config.registry
         config = Configurator(reg)
         def dummy_renderer_factory(*arg, **kw):
@@ -179,7 +180,7 @@ class TestNotFoundDirective(unittest.TestCase):
             (IViewClassifier, IRequest, implementedBy(NotFound)),
             IView, default=None)
         self.assertNotEqual(derived_view, None)
-        self.assertEqual(derived_view(None, None).body, 'OK')
+        self.assertEqual(derived_view(None, None).body, b('OK'))
         self.assertEqual(derived_view.__name__, 'view')
 
 class TestForbiddenDirective(unittest.TestCase):
@@ -229,6 +230,7 @@ class TestForbiddenDirective(unittest.TestCase):
         from pyramid.exceptions import Forbidden
         from pyramid.config import Configurator
         from pyramid.registry import undefer
+        from pyramid_zcml._compat import b
         reg = self.config.registry
         config = Configurator(reg)
         def dummy_renderer_factory(*arg, **kw):
@@ -248,7 +250,7 @@ class TestForbiddenDirective(unittest.TestCase):
             (IViewClassifier, IRequest, implementedBy(Forbidden)),
             IView, default=None)
         self.assertNotEqual(derived_view, None)
-        self.assertEqual(derived_view(None, None).body, 'OK')
+        self.assertEqual(derived_view(None, None).body, b('OK'))
         self.assertEqual(derived_view.__name__, 'view')
 
 class TestRepozeWho1AuthenticationPolicyDirective(unittest.TestCase):
@@ -439,7 +441,7 @@ class TestRouteDirective(unittest.TestCase):
         request_type = reg.getUtility(IRouteRequest, 'name')
         wrapped = reg.adapters.lookup(
             (IViewClassifier, request_type, Interface), IView, name='')
-        self.failUnless(wrapped)
+        self.assertTrue(wrapped)
 
     def test_with_view_and_view_context(self):
         from pyramid.interfaces import IView
@@ -456,7 +458,7 @@ class TestRouteDirective(unittest.TestCase):
         self._assertRoute('name', 'pattern')
         wrapped = reg.adapters.lookup(
             (IViewClassifier, request_type, IDummy), IView, name='')
-        self.failUnless(wrapped)
+        self.assertTrue(wrapped)
 
     def test_with_view_context_trumps_view_for(self):
         from pyramid.interfaces import IView
@@ -475,7 +477,7 @@ class TestRouteDirective(unittest.TestCase):
         self._assertRoute('name', 'pattern')
         wrapped = reg.adapters.lookup(
             (IViewClassifier, request_type, IDummy), IView, name='')
-        self.failUnless(wrapped)
+        self.assertTrue(wrapped)
 
     def test_with_dotted_renderer(self):
         from zope.interface import Interface
@@ -499,10 +501,10 @@ class TestRouteDirective(unittest.TestCase):
 
         wrapped = reg.adapters.lookup(
             (IViewClassifier, request_type, Interface), IView, name='')
-        self.failUnless(wrapped)
+        self.assertTrue(wrapped)
         request = DummyRequest()
         result = wrapped(None, request)
-        self.assertEqual(result.body, 'OK')
+        self.assertEqual(result.body, b'OK')
 
     def test_with_custom_predicates(self):
         def pred1(context, request): pass
@@ -666,7 +668,7 @@ class TestRendererDirective(unittest.TestCase):
         self._callFUT(context, renderer, 'r')
         actions = extract_actions(context.actions)
         _execute_actions(actions)
-        self.failUnless(reg.getUtility(IRendererFactory, 'r'), renderer)
+        self.assertTrue(reg.getUtility(IRendererFactory, 'r'), renderer)
     
 class TestZCMLConfigure(unittest.TestCase):
     i = 0
@@ -709,8 +711,8 @@ class TestZCMLConfigure(unittest.TestCase):
 
     def test_zcml_configure(self):
         actions = self._callFUT('configure.zcml', self.module)
-        self.failUnless(actions)
-        self.failUnless(isinstance(actions, list))
+        self.assertTrue(actions)
+        self.assertTrue(isinstance(actions, list))
 
     def test_zcml_configure_nonexistent_configure_dot_zcml(self):
         import os
@@ -772,6 +774,7 @@ class TestAdapterDirective(unittest.TestCase):
     def test_for_is_None_adaptedBy_set(self):
         from pyramid.registry import Registry
         from pyramid.registry import undefer
+        from pyramid_zcml._compat import unwrap_func
         context = DummyContext()
         context.registry = self.config.registry
         factory = DummyFactory()
@@ -782,8 +785,8 @@ class TestAdapterDirective(unittest.TestCase):
         regadapt = actions[0]
         discrim = undefer(regadapt['discriminator'])
         self.assertEqual(discrim, ('adapter', (IDummy,), IFactory, ''))
-        self.assertEqual(regadapt['callable'].im_func,
-                         Registry.registerAdapter.im_func)
+        self.assertTrue(unwrap_func(regadapt['callable']) is
+                        unwrap_func(Registry.registerAdapter))
         self.assertEqual(regadapt['args'],
                          (factory, (IDummy,), IFactory, '', None))
 
@@ -796,14 +799,15 @@ class TestAdapterDirective(unittest.TestCase):
     def test_provides_obtained_via_implementedBy(self):
         from pyramid.registry import Registry
         from pyramid.registry import undefer
+        from pyramid_zcml._compat import unwrap_func
         context = DummyContext()
         context.registry = self.config.registry
         self._callFUT(context, [DummyFactory], for_=(IDummy,))
         regadapt = extract_actions(context.actions)[0]
         discrim = undefer(regadapt['discriminator']) # XXX
         self.assertEqual(discrim, ('adapter', (IDummy,), IFactory, ''))
-        self.assertEqual(regadapt['callable'].im_func,
-                         Registry.registerAdapter.im_func)
+        self.assertTrue(unwrap_func(regadapt['callable']) is
+                        unwrap_func(Registry.registerAdapter))
         self.assertEqual(regadapt['args'],
                          (DummyFactory, (IDummy,), IFactory, '', None))
 
@@ -825,6 +829,7 @@ class TestAdapterDirective(unittest.TestCase):
     def test_rolled_up_factories(self):
         from pyramid.registry import Registry
         from pyramid.registry import undefer
+        from pyramid_zcml._compat import unwrap_func
         context = DummyContext()
         context.registry = self.config.registry
         factory = DummyFactory()
@@ -835,8 +840,8 @@ class TestAdapterDirective(unittest.TestCase):
         regadapt = extract_actions(context.actions)[0]
         discrim = undefer(regadapt['discriminator']) # XXX
         self.assertEqual(discrim, ('adapter', (IDummy,), IFactory, ''))
-        self.assertEqual(regadapt['callable'].im_func,
-                         Registry.registerAdapter.im_func)
+        self.assertTrue(unwrap_func(regadapt['callable']) is
+                        unwrap_func(Registry.registerAdapter))
         self.assertEqual(regadapt['args'][0].__module__, 'pyramid_zcml')
 
 class TestSubscriberDirective(unittest.TestCase):
@@ -901,6 +906,7 @@ class TestSubscriberDirective(unittest.TestCase):
             )
 
     def test_register_with_handler(self):
+        from pyramid_zcml._compat import u
         context = DummyZCMLContext(self.config)
         factory = DummyFactory()
         self._callFUT(context, for_=(IDummy,),
@@ -914,7 +920,7 @@ class TestSubscriberDirective(unittest.TestCase):
         self.assertEqual(len(registrations), 1)
         self.assertEqual(
             registrations[0][:3],
-            ((IDummy,), u'', factory)
+            ((IDummy,), u(''), factory)
             )
 
 class TestUtilityDirective(unittest.TestCase):
@@ -940,6 +946,7 @@ class TestUtilityDirective(unittest.TestCase):
     def test_provides_from_factory_implements(self):
         from pyramid.registry import Registry
         from pyramid.registry import undefer
+        from pyramid_zcml._compat import unwrap_func
         context = DummyZCMLContext(self.config)
         self._callFUT(context, factory=DummyFactory)
         actions = extract_actions(context.actions)
@@ -947,14 +954,15 @@ class TestUtilityDirective(unittest.TestCase):
         utility = actions[0]
         discrim = undefer(utility['discriminator'])
         self.assertEqual(discrim, ('utility', IFactory, ''))
-        self.assertEqual(utility['callable'].im_func,
-                         Registry.registerUtility.im_func)
+        self.assertTrue(unwrap_func(utility['callable']) is
+                        unwrap_func(Registry.registerUtility))
         self.assertEqual(utility['args'][:3], (None, IFactory, ''))
         self.assertEqual(utility['kw'], {'factory':DummyFactory})
 
     def test_provides_from_component_provides(self):
         from pyramid.registry import Registry
         from pyramid.registry import undefer
+        from pyramid_zcml._compat import unwrap_func
         context = DummyZCMLContext(self.config)
         component = DummyFactory()
         self._callFUT(context, component=component)
@@ -963,8 +971,8 @@ class TestUtilityDirective(unittest.TestCase):
         utility = actions[0]
         discrim = undefer(utility['discriminator'])
         self.assertEqual(discrim, ('utility', IFactory, ''))
-        self.assertEqual(utility['callable'].im_func,
-                         Registry.registerUtility.im_func)
+        self.assertTrue(unwrap_func(utility['callable']) is
+                        unwrap_func(Registry.registerUtility))
         self.assertEqual(utility['args'][:3], (component, IFactory, ''))
         self.assertEqual(utility['kw'], {})
 
@@ -1125,7 +1133,7 @@ class Test_load_zcml(unittest.TestCase):
                                autocommit=True)
         registry = config.load_zcml()
         from pyramid_zcml.tests.fixtureapp.models import IFixture
-        self.failUnless(registry.queryUtility(IFixture)) # only in c.zcml
+        self.assertTrue(registry.queryUtility(IFixture)) # only in c.zcml
 
     def test_load_zcml_without_autocommit(self):
         from pyramid_zcml.tests.fixtureapp.models import IFixture
@@ -1133,21 +1141,21 @@ class Test_load_zcml(unittest.TestCase):
         config = self._makeOne(package=pyramid_zcml.tests.fixtureapp,
                                autocommit=False)
         registry = config.load_zcml()
-        self.failIf(registry.queryUtility(IFixture)) # only in c.zcml
+        self.assertFalse(registry.queryUtility(IFixture)) # only in c.zcml
         config.commit()
-        self.failUnless(registry.queryUtility(IFixture)) # only in c.zcml
+        self.assertTrue(registry.queryUtility(IFixture)) # only in c.zcml
 
     def test_load_zcml_routesapp(self):
         from pyramid.interfaces import IRoutesMapper
         config = self._makeOne(autocommit=True)
         config.load_zcml('pyramid_zcml.tests.routesapp:configure.zcml')
-        self.failUnless(config.registry.getUtility(IRoutesMapper))
+        self.assertTrue(config.registry.getUtility(IRoutesMapper))
 
     def test_load_zcml_fixtureapp(self):
         from pyramid_zcml.tests.fixtureapp.models import IFixture
         config = self._makeOne(autocommit=True)
         config.load_zcml('pyramid_zcml.tests.fixtureapp:configure.zcml')
-        self.failUnless(config.registry.queryUtility(IFixture)) # only in c.zcml
+        self.assertTrue(config.registry.queryUtility(IFixture)) # only in c.zcml
 
     def test_load_zcml_as_relative_filename(self):
         import pyramid_zcml.tests.fixtureapp
@@ -1155,7 +1163,7 @@ class Test_load_zcml(unittest.TestCase):
                                autocommit=True)
         registry = config.load_zcml('configure.zcml')
         from pyramid_zcml.tests.fixtureapp.models import IFixture
-        self.failUnless(registry.queryUtility(IFixture)) # only in c.zcml
+        self.assertTrue(registry.queryUtility(IFixture)) # only in c.zcml
 
     def test_load_zcml_as_absolute_filename(self):
         import os
@@ -1166,7 +1174,7 @@ class Test_load_zcml(unittest.TestCase):
         c_z = os.path.join(dn, 'configure.zcml')
         registry = config.load_zcml(c_z)
         from pyramid_zcml.tests.fixtureapp.models import IFixture
-        self.failUnless(registry.queryUtility(IFixture)) # only in c.zcml
+        self.assertTrue(registry.queryUtility(IFixture)) # only in c.zcml
 
     def test_load_zcml_lock_and_unlock(self):
         config = self._makeOne(autocommit=True)
@@ -1182,9 +1190,10 @@ class Test_includeme(unittest.TestCase):
         from pyramid.config import Configurator
         from pyramid_zcml import load_zcml
         from pyramid_zcml import includeme
+        from pyramid_zcml._compat import unwrap_func
         c = Configurator(autocommit=True)
         c.include(includeme)
-        self.failUnless(c.load_zcml.im_func is load_zcml)
+        self.assertTrue(unwrap_func(c.load_zcml) is load_zcml)
 
 class IDummy(Interface):
     pass
@@ -1192,8 +1201,8 @@ class IDummy(Interface):
 class IFactory(Interface):
     pass
 
+@implementer(IFactory)
 class DummyFactory(object):
-    implements(IFactory)
     def __call__(self):
         """ """
         

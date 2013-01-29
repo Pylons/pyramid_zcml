@@ -1,6 +1,7 @@
-from cgi import escape
 from pyramid.security import view_execution_permitted
 from webob import Response
+
+from pyramid_zcml._compat import escape
 
 def x_view(request): # pragma: no cover
      return Response('this is private!')
