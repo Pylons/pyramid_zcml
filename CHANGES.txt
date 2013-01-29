@@ -1,6 +1,8 @@
 1.0.0 (unreleased)
 ------------------
 
+- Add ``setup.py docs`` alias (installs ``Sphinx`` and dependencies).
+
 - Add ``setup.py dev`` alias (runs ``setup.py develop`` plus installs
   ``nose`` and ``coverage``).
 

@@ -32,6 +32,8 @@ tests_require = install_requires + ['WebTest']
 
 testing_extras = ['WebTest']
 
+docs_extras = ['Sphinx', 'repoze.sphinx.autointerface']
+
 setup(name='pyramid_zcml',
       version='0.10dev',
       description='Zope Config Markup Language support for Pyramid',
@@ -65,6 +67,7 @@ setup(name='pyramid_zcml',
       test_suite="pyramid_zcml",
       extras_require = {
           'testing': testing_extras,
+          'docs': docs_extras,
           },
       entry_points = """
       [paste.paster_create_template]
