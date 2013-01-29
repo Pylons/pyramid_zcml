@@ -35,7 +35,7 @@ testing_extras = ['WebTest']
 docs_extras = ['Sphinx', 'repoze.sphinx.autointerface']
 
 setup(name='pyramid_zcml',
-      version='0.10dev',
+      version='1.0dev',
       description='Zope Config Markup Language support for Pyramid',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
