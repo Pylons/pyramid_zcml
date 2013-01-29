@@ -1,3 +1,8 @@
+0.9.3 (unreleased)
+------------------
+
+- Fix for xhr predicate behaviour: ignore when no xhr value is specified
+
 0.9.2 (2012-02-20)
 ------------------
 
