@@ -53,6 +53,7 @@ class TestViewDirective(unittest.TestCase):
         from pyramid.interfaces import IView
         from pyramid.interfaces import IViewClassifier
         from pyramid.interfaces import IRequest
+        from pyramid.registry import undefer
         reg = self.config.registry
         context = DummyZCMLContext(self.config)
         view = lambda *arg: 'OK'
@@ -65,7 +66,7 @@ class TestViewDirective(unittest.TestCase):
                       custom_predicates=preds, renderer=null_renderer)
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
-        discrim = actions[0]['discriminator']
+        discrim = undefer(actions[0]['discriminator'])
         self.assertEqual(discrim[0], 'view')
         register = actions[0]['callable']
         register()
@@ -77,6 +78,7 @@ class TestViewDirective(unittest.TestCase):
         from pyramid.interfaces import IView
         from pyramid.interfaces import IViewClassifier
         from pyramid.interfaces import IRequest
+        from pyramid.registry import undefer
         reg = self.config.registry
         context = DummyZCMLContext(self.config)
         view = lambda *arg: 'OK'
@@ -86,7 +88,7 @@ class TestViewDirective(unittest.TestCase):
                       context=IDummy, renderer=null_renderer)
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
-        discrim = actions[0]['discriminator']
+        discrim = undefer(actions[0]['discriminator'])
         self.assertEqual(discrim[0], 'view')
         self.assertEqual(discrim[1], IDummy)
         register = actions[0]['callable']
@@ -99,6 +101,7 @@ class TestViewDirective(unittest.TestCase):
         from pyramid.interfaces import IView
         from pyramid.interfaces import IViewClassifier
         from pyramid.interfaces import IRequest
+        from pyramid.registry import undefer
         reg = self.config.registry
         context = DummyZCMLContext(self.config)
         view = lambda *arg: 'OK'
@@ -108,7 +111,7 @@ class TestViewDirective(unittest.TestCase):
                       renderer=null_renderer)
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
-        discrim = actions[0]['discriminator']
+        discrim = undefer(actions[0]['discriminator'])
         self.assertEqual(discrim[0], 'view')
         self.assertEqual(discrim[1], IDummy)
         register = actions[0]['callable']
@@ -134,6 +137,7 @@ class TestNotFoundDirective(unittest.TestCase):
         from pyramid.interfaces import IView
         from pyramid.interfaces import IViewClassifier
         from pyramid.exceptions import NotFound
+        from pyramid.registry import undefer
 
         reg = self.config.registry
         context = DummyZCMLContext(self.config)
@@ -142,10 +146,7 @@ class TestNotFoundDirective(unittest.TestCase):
         self._callFUT(context, view, renderer=null_renderer)
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
-        discrim = actions[0]['discriminator']
-
-        discrim = ('view', NotFound, '', None, IView, None, None, None, None,
-                   None, False, None, None, None)
+        discrim = undefer(actions[0]['discriminator'])
         self.assertEqual(discrim[0], 'view')
         self.assertEqual(discrim[1], NotFound)
         register = actions[0]['callable']
@@ -203,6 +204,7 @@ class TestForbiddenDirective(unittest.TestCase):
         from pyramid.interfaces import IView
         from pyramid.interfaces import IViewClassifier
         from pyramid.exceptions import Forbidden
+        from pyramid.registry import undefer
         reg = self.config.registry
         context = DummyZCMLContext(self.config)
         def view(request):
@@ -211,7 +213,7 @@ class TestForbiddenDirective(unittest.TestCase):
         actions = extract_actions(context.actions)
 
         self.assertEqual(len(actions), 1)
-        discrim = actions[0]['discriminator']
+        discrim = undefer(actions[0]['discriminator'])
         self.assertEqual(discrim[0], 'view')
         self.assertEqual(discrim[1], Forbidden)
         register = actions[0]['callable']
@@ -624,6 +626,7 @@ class TestAssetDirective(unittest.TestCase):
         return asset(*arg, **kw)
 
     def test_it(self):
+        from pyramid.registry import undefer
         import pyramid_zcml.tests
         context = DummyZCMLContext(self.config)
         L = []
@@ -635,6 +638,7 @@ class TestAssetDirective(unittest.TestCase):
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
         action = actions[0]
+        discrim = undefer(actions[0]['discriminator'])
         self.assertEqual(action['discriminator'], None)
         action['callable']()
         self.assertEqual(
@@ -767,6 +771,7 @@ class TestAdapterDirective(unittest.TestCase):
 
     def test_for_is_None_adaptedBy_set(self):
         from pyramid.registry import Registry
+        from pyramid.registry import undefer
         context = DummyContext()
         context.registry = self.config.registry
         factory = DummyFactory()
@@ -775,7 +780,7 @@ class TestAdapterDirective(unittest.TestCase):
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
         regadapt = actions[0]
-        self.assertEqual(regadapt['discriminator'],
+        self.assertEqual(undefer(regadapt['discriminator']),
                          ('adapter', (IDummy,), IFactory, ''))
         self.assertEqual(regadapt['callable'].im_func,
                          Registry.registerAdapter.im_func)
@@ -790,11 +795,12 @@ class TestAdapterDirective(unittest.TestCase):
 
     def test_provides_obtained_via_implementedBy(self):
         from pyramid.registry import Registry
+        from pyramid.registry import undefer
         context = DummyContext()
         context.registry = self.config.registry
         self._callFUT(context, [DummyFactory], for_=(IDummy,))
         regadapt = extract_actions(context.actions)[0]
-        self.assertEqual(regadapt['discriminator'],
+        self.assertEqual(undefer(regadapt['discriminator']),
                          ('adapter', (IDummy,), IFactory, ''))
         self.assertEqual(regadapt['callable'].im_func,
                          Registry.registerAdapter.im_func)
@@ -818,6 +824,7 @@ class TestAdapterDirective(unittest.TestCase):
         
     def test_rolled_up_factories(self):
         from pyramid.registry import Registry
+        from pyramid.registry import undefer
         context = DummyContext()
         context.registry = self.config.registry
         factory = DummyFactory()
@@ -826,7 +833,7 @@ class TestAdapterDirective(unittest.TestCase):
                       provides=IFactory,
                       for_=(IDummy,))
         regadapt = extract_actions(context.actions)[0]
-        self.assertEqual(regadapt['discriminator'],
+        self.assertEqual(undefer(regadapt['discriminator']),
                          ('adapter', (IDummy,), IFactory, ''))
         self.assertEqual(regadapt['callable'].im_func,
                          Registry.registerAdapter.im_func)
@@ -932,12 +939,14 @@ class TestUtilityDirective(unittest.TestCase):
         
     def test_provides_from_factory_implements(self):
         from pyramid.registry import Registry
+        from pyramid.registry import undefer
         context = DummyZCMLContext(self.config)
         self._callFUT(context, factory=DummyFactory)
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
         utility = actions[0]
-        self.assertEqual(utility['discriminator'], ('utility', IFactory, ''))
+        self.assertEqual(undefer(utility['discriminator']),
+                                 ('utility', IFactory, ''))
         self.assertEqual(utility['callable'].im_func,
                          Registry.registerUtility.im_func)
         self.assertEqual(utility['args'][:3], (None, IFactory, ''))
@@ -945,13 +954,15 @@ class TestUtilityDirective(unittest.TestCase):
 
     def test_provides_from_component_provides(self):
         from pyramid.registry import Registry
+        from pyramid.registry import undefer
         context = DummyZCMLContext(self.config)
         component = DummyFactory()
         self._callFUT(context, component=component)
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
         utility = actions[0]
-        self.assertEqual(utility['discriminator'], ('utility', IFactory, ''))
+        self.assertEqual(undefer(utility['discriminator']),
+                                 ('utility', IFactory, ''))
         self.assertEqual(utility['callable'].im_func,
                          Registry.registerUtility.im_func)
         self.assertEqual(utility['args'][:3], (component, IFactory, ''))
@@ -994,13 +1005,14 @@ class TestLocaleNegotiatorDirective(unittest.TestCase):
 
     def test_it(self):
         from pyramid.interfaces import ILocaleNegotiator
+        from pyramid.registry import undefer
         context = DummyZCMLContext(self.config)
         dummy_negotiator = object()
         self._callFUT(context, dummy_negotiator)
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
         action = actions[0]
-        self.assertEqual(action['discriminator'], ILocaleNegotiator)
+        self.assertEqual(undefer(action['discriminator']), ILocaleNegotiator)
         callback = action['callable']
         callback()
         self.assertEqual(self.config.registry.getUtility(ILocaleNegotiator),
