@@ -13,7 +13,6 @@
 ##############################################################################
 
 import os
-import platform
 
 from setuptools import setup, find_packages
 
@@ -24,17 +23,14 @@ try:
 except IOError:
     README = CHANGES = ''
 
-install_requires=[
+install_requires = [
     'pyramid>=1.4dev', # various b/w compat choices
     'zope.configuration>=3.8.0dev', # dict actions
-    ]
+]
 
-if platform.system() == 'Java':
-    tests_require = install_requires + ['WebTest', 'venusian']
-else:
-    tests_require = install_requires + ['Sphinx', 'docutils', 
-                                        'repoze.sphinx.autointerface',
-                                        'WebTest', 'venusian']
+tests_require = install_requires + ['WebTest']
+
+testing_extras = ['WebTest']
 
 setup(name='pyramid_zcml',
       version='0.10dev',
@@ -67,6 +63,9 @@ setup(name='pyramid_zcml',
       install_requires = install_requires,
       tests_require = tests_require,
       test_suite="pyramid_zcml",
+      extras_require = {
+          'testing': testing_extras,
+          },
       entry_points = """
       [paste.paster_create_template]
       pyramid_starter_zcml=pyramid_zcml.scaffolds:StarterZCMLProjectTemplate

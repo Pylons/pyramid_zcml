@@ -1,5 +1,8 @@
-0.10.0 (unreleased)
--------------------
+1.0.0 (unreleased)
+------------------
+
+- Add ``setup.py dev`` alias (runs ``setup.py develop`` plus installs
+  ``nose`` and ``coverage``).
 
 - Add support for Python 3.2 and 3.3.
 
