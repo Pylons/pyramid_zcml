@@ -157,7 +157,7 @@ class TestNotFoundDirective(unittest.TestCase):
 
         self.assertNotEqual(derived_view, None)
         self.assertEqual(derived_view(None, None), 'OK')
-        self.assertEqual(derived_view.__name__, 'bwcompat_view')
+        self.assertEqual(derived_view.__name__, 'view')
 
     def test_it_with_dotted_renderer(self):
         from zope.interface import implementedBy
@@ -166,6 +166,7 @@ class TestNotFoundDirective(unittest.TestCase):
         from pyramid.interfaces import IViewClassifier
         from pyramid.exceptions import NotFound
         from pyramid.config import Configurator
+        from pyramid.registry import undefer
         reg = self.config.registry
         config = Configurator(reg)
         def dummy_renderer_factory(*arg, **kw):
@@ -178,6 +179,7 @@ class TestNotFoundDirective(unittest.TestCase):
         self._callFUT(context, view, renderer='fake.pt')
         actions = extract_actions(context.actions)
         regadapt = actions[0]
+        discrim = undefer(regadapt['discriminator'])
         register = regadapt['callable']
         register()
         derived_view = reg.adapters.lookup(
@@ -185,7 +187,7 @@ class TestNotFoundDirective(unittest.TestCase):
             IView, default=None)
         self.assertNotEqual(derived_view, None)
         self.assertEqual(derived_view(None, None).body, 'OK')
-        self.assertEqual(derived_view.__name__, 'bwcompat_view')
+        self.assertEqual(derived_view.__name__, 'view')
 
 class TestForbiddenDirective(unittest.TestCase):
     def setUp(self):
@@ -224,7 +226,7 @@ class TestForbiddenDirective(unittest.TestCase):
 
         self.assertNotEqual(derived_view, None)
         self.assertEqual(derived_view(None, None), 'OK')
-        self.assertEqual(derived_view.__name__, 'bwcompat_view')
+        self.assertEqual(derived_view.__name__, 'view')
 
     def test_it_with_dotted_renderer(self):
         from zope.interface import implementedBy
@@ -233,6 +235,7 @@ class TestForbiddenDirective(unittest.TestCase):
         from pyramid.interfaces import IViewClassifier
         from pyramid.exceptions import Forbidden
         from pyramid.config import Configurator
+        from pyramid.registry import undefer
         reg = self.config.registry
         config = Configurator(reg)
         def dummy_renderer_factory(*arg, **kw):
@@ -245,6 +248,7 @@ class TestForbiddenDirective(unittest.TestCase):
         self._callFUT(context, view, renderer='fake.pt')
         actions = extract_actions(context.actions)
         regadapt = actions[0]
+        regadapt['discriminator'] = undefer(regadapt['discriminator']) # XXX
         register = regadapt['callable']
         register()
         derived_view = reg.adapters.lookup(
@@ -252,7 +256,7 @@ class TestForbiddenDirective(unittest.TestCase):
             IView, default=None)
         self.assertNotEqual(derived_view, None)
         self.assertEqual(derived_view(None, None).body, 'OK')
-        self.assertEqual(derived_view.__name__, 'bwcompat_view')
+        self.assertEqual(derived_view.__name__, 'view')
 
 class TestRepozeWho1AuthenticationPolicyDirective(unittest.TestCase):
     def setUp(self):
@@ -580,7 +584,10 @@ class TestStaticDirective(unittest.TestCase):
         view = reg.adapters.lookup(
             (IViewClassifier, request_type, iface), IView, name='')
         request = DummyRequest()
-        val = view(None, request).__class__.__name__
+        try:
+            val = view(None, request).__class__.__name__
+        except Exception as e:
+            val = e.__class__.__name__
         self.assertTrue(val in ['PackageURLParser', 'HTTPMovedPermanently'])
 
     def test_it_with_nondefault_permission(self):
@@ -737,13 +744,13 @@ class TestZCMLScanDirective(unittest.TestCase):
         def foo(): pass
         def bar(scanner, name, ob):
             dummy_module.scanned = True
-        categories = DummyVenusianCategories({'pyramid':[bar]})
-        foo.__venusian_callbacks__ = categories
+        foo.__venusian_callbacks__ = DummyVenusianCategories(
+                                         {'pyramid':[(bar, 'dummy')]})
         dummy_module.foo = foo
         
         context = DummyZCMLContext(self.config)
         self._callFUT(context, dummy_module)
-        self.assertEqual(dummy_module.scanned, True)
+        self.assertTrue(dummy_module.scanned)
 
 class TestAdapterDirective(unittest.TestCase):
     def setUp(self):
@@ -780,8 +787,8 @@ class TestAdapterDirective(unittest.TestCase):
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
         regadapt = actions[0]
-        self.assertEqual(undefer(regadapt['discriminator']),
-                         ('adapter', (IDummy,), IFactory, ''))
+        discrim = undefer(regadapt['discriminator'])
+        self.assertEqual(discrim, ('adapter', (IDummy,), IFactory, ''))
         self.assertEqual(regadapt['callable'].im_func,
                          Registry.registerAdapter.im_func)
         self.assertEqual(regadapt['args'],
@@ -800,8 +807,8 @@ class TestAdapterDirective(unittest.TestCase):
         context.registry = self.config.registry
         self._callFUT(context, [DummyFactory], for_=(IDummy,))
         regadapt = extract_actions(context.actions)[0]
-        self.assertEqual(undefer(regadapt['discriminator']),
-                         ('adapter', (IDummy,), IFactory, ''))
+        discrim = undefer(regadapt['discriminator']) # XXX
+        self.assertEqual(discrim, ('adapter', (IDummy,), IFactory, ''))
         self.assertEqual(regadapt['callable'].im_func,
                          Registry.registerAdapter.im_func)
         self.assertEqual(regadapt['args'],
@@ -833,8 +840,8 @@ class TestAdapterDirective(unittest.TestCase):
                       provides=IFactory,
                       for_=(IDummy,))
         regadapt = extract_actions(context.actions)[0]
-        self.assertEqual(undefer(regadapt['discriminator']),
-                         ('adapter', (IDummy,), IFactory, ''))
+        discrim = undefer(regadapt['discriminator']) # XXX
+        self.assertEqual(discrim, ('adapter', (IDummy,), IFactory, ''))
         self.assertEqual(regadapt['callable'].im_func,
                          Registry.registerAdapter.im_func)
         self.assertEqual(regadapt['args'][0].__module__, 'pyramid_zcml')
@@ -945,8 +952,8 @@ class TestUtilityDirective(unittest.TestCase):
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
         utility = actions[0]
-        self.assertEqual(undefer(utility['discriminator']),
-                                 ('utility', IFactory, ''))
+        discrim = undefer(utility['discriminator'])
+        self.assertEqual(discrim, ('utility', IFactory, ''))
         self.assertEqual(utility['callable'].im_func,
                          Registry.registerUtility.im_func)
         self.assertEqual(utility['args'][:3], (None, IFactory, ''))
@@ -961,8 +968,8 @@ class TestUtilityDirective(unittest.TestCase):
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
         utility = actions[0]
-        self.assertEqual(undefer(utility['discriminator']),
-                                 ('utility', IFactory, ''))
+        discrim = undefer(utility['discriminator'])
+        self.assertEqual(discrim, ('utility', IFactory, ''))
         self.assertEqual(utility['callable'].im_func,
                          Registry.registerUtility.im_func)
         self.assertEqual(utility['args'][:3], (component, IFactory, ''))
@@ -1201,6 +1208,7 @@ class DummyModule:
     __path__ = "foo"
     __name__ = "dummy"
     __file__ = ''
+    scanned = False
 
 class DummyContext:
     def __init__(self, resolved=DummyModule):
@@ -1397,7 +1405,10 @@ class DummyZCMLContext(object):
         self._ctx.action(*arg, **kw)
 
 def _execute_actions(actions):
+    from pyramid.registry import undefer
     for action in sorted(actions, key=lambda x: x['order']):
+        if 'discriminator' in action:
+            discrim = undefer(action['discriminator'])
         if 'callable' in action:
             if action['callable']:
                 action['callable']()
