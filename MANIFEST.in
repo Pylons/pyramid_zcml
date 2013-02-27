@@ -1,0 +1,2 @@
+include *.txt *.ini *.cfg *.rst
+recursive-include pyramid_zcml *.cfg_tmpl *.css *.gif *.html *.ico *.ini_tmpl *.mak *.mo *.png *.po *.pt *.pt_tmpl *.py_tmpl *.txt_tmpl *.zcml
