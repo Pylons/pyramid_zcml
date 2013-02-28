@@ -10,7 +10,7 @@
 
 - Drop support for Pyramid < 1.4.
 
-- Fix for ``xhr`` predicate behaviour: ignore when no ``xh``r value specified.
+- Fix for ``xhr`` predicate behaviour: ignore when no ``xhr`` value specified.
 
 - Drop support for Python 2.5, Jython.
 
