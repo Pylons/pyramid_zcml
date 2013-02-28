@@ -1,4 +1,4 @@
-1.0.0 (unreleased)
+1.0.0 (2013-02-28)
 ------------------
 
 - Add ``setup.py docs`` alias (installs ``Sphinx`` and dependencies).
