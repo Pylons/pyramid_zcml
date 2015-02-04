@@ -443,7 +443,9 @@ def authtktauthenticationpolicy(_context,
                                              max_age=max_age,
                                              http_only=http_only,
                                              path=path,
-                                             wild_domain=wild_domain)
+                                             wild_domain=wild_domain,
+                                             hashalg='sha512',
+                                            )
     except ValueError as why: # pragma: no cover
         raise ConfigurationError(str(why))
     # authentication policies must be registered eagerly so they can

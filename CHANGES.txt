@@ -1,6 +1,9 @@
 Unreleased
 ----------
 
+- Strengthen the hash algorithm used in ``<authtkauthpolicy>`` directive
+  from ``md5`` -> ``sha512``.
+
 - Add support for Python 3.4.
 
 - Add support for ZCML "features" (labels controlling conditional
