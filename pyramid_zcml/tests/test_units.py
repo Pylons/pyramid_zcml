@@ -372,8 +372,8 @@ class TestAuthTktAuthenticationPolicyDirective(unittest.TestCase):
         reg.registerUtility(object(), IAuthorizationPolicy)
         _execute_actions(actions)
         policy = reg.getUtility(IAuthenticationPolicy)
-        self.assertEqual(policy.cookie.path, '/sub/')
-        self.assertEqual(policy.cookie.http_only, True)
+        self.assertEqual(policy.cookie.cookie_profile.path, '/sub/')
+        self.assertEqual(policy.cookie.cookie_profile.httponly, True)
         self.assertEqual(policy.cookie.secret, 'sosecret')
         self.assertEqual(policy.callback, callback)
 
