@@ -28,9 +28,9 @@ install_requires = [
     'zope.configuration>=3.8.0dev', # dict actions
 ]
 
-tests_require = install_requires + ['WebTest']
+tests_require = install_requires + ['pyramid_mako', 'WebTest']
 
-testing_extras = ['WebTest']
+testing_extras = ['pyramid_mako', 'WebTest']
 
 docs_extras = ['Sphinx', 'repoze.sphinx.autointerface']
 

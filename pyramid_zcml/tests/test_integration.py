@@ -7,6 +7,7 @@ class IntegrationBase(unittest.TestCase):
         from pyramid_zcml import includeme
         from pyramid.config import Configurator
         config = Configurator(root_factory=self.root_factory)
+        config.include('pyramid_mako')
         config.include(includeme)
         config.begin()
         config.load_zcml(self.config)

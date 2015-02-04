@@ -1,3 +1,9 @@
+Unreleased
+----------
+
+- Add ``pyramid_mako`` testing dependency and configure it in tests
+  (Current versions of Pyramid split out ``Mako`` integration).
+
 1.0.0 (2013-02-28)
 ------------------
 
