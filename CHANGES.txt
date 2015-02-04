@@ -1,6 +1,8 @@
 Unreleased
 ----------
 
+- Updated tests to support ``pyramid>=1.5`` and ``venusian>=1.0.0`` APIs.
+
 - Add ``pyramid_mako`` testing dependency and configure it in tests
   (Current versions of Pyramid split out ``Mako`` integration).
 
