@@ -6,7 +6,7 @@ Unreleased
 - Add support for ZCML "features" (labels controlling conditional
   directives).  See:  https://github.com/Pylons/pyramid_zcml/pull/1.
 
-- Update tests to support ``pyramid>=1.5`` and ``venusian>=1.0.0`` APIs.
+- Drop support for pyramid < 1.5, venusian < 1.0.0.
 
 - Add ``pyramid_mako`` testing dependency and configure it in tests
   (Current versions of Pyramid split out ``Mako`` integration).
