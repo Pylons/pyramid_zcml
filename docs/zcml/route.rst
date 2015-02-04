@@ -147,6 +147,8 @@ Attributes
   containing matching information; see :ref:`custom_route_predicates`
   for more information about ``info``.
 
+  .. note:: this argument is deprecated as of Pyramid 1.5.
+
 ``view_context``
   The :term:`dotted Python name` to a class or an interface that the
   :term:`context` of the view should match for the view named by the

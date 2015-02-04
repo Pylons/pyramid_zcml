@@ -213,6 +213,8 @@ Predicate Attributes
   associated view callable will be considered viable for a given
   request.
 
+  .. note:: this argument is deprecated as of Pyramid 1.5.
+
 ``decorator``
   A :term:`dotted Python name` to a function that will be used to decorate
   the registered :term:`view callable`.  The decorator function will be
