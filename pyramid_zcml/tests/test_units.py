@@ -43,6 +43,7 @@ class TestViewDirective(unittest.TestCase):
         self.assertEqual(regview(None, None).body, b'OK')
 
     def test_with_custom_predicates(self):
+        import warnings
         from pyramid.interfaces import IView
         from pyramid.interfaces import IViewClassifier
         from pyramid.interfaces import IRequest
@@ -55,8 +56,9 @@ class TestViewDirective(unittest.TestCase):
         def pred2(context, request):
             return True
         preds = (pred1, pred2)
-        self._callFUT(context, 'repoze.view', IDummy, view=view,
-                      custom_predicates=preds, renderer=null_renderer)
+        with warnings.catch_warnings(record=True):
+            self._callFUT(context, 'repoze.view', IDummy, view=view,
+                          custom_predicates=preds, renderer=null_renderer)
         actions = extract_actions(context.actions)
         self.assertEqual(len(actions), 1)
         discrim = undefer(actions[0]['discriminator'])
@@ -507,12 +509,14 @@ class TestRouteDirective(unittest.TestCase):
         self.assertEqual(result.body, b'OK')
 
     def test_with_custom_predicates(self):
+        import warnings
         def pred1(context, request): pass
         def pred2(context, request): pass
         context = DummyZCMLContext(self.config)
 
-        self._callFUT(context, 'name', 'pattern',
-                      custom_predicates=(pred1, pred2))
+        with warnings.catch_warnings(record=True):
+            self._callFUT(context, 'name', 'pattern',
+                          custom_predicates=(pred1, pred2))
         actions = extract_actions(context.actions)
         _execute_actions(actions)
         self._assertRoute('name', 'pattern', 2)
