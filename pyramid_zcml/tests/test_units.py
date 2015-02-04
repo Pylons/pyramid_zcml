@@ -1158,6 +1158,15 @@ class Test_load_zcml(unittest.TestCase):
         config.load_zcml('pyramid_zcml.tests.fixtureapp:configure.zcml')
         self.assertTrue(config.registry.queryUtility(IFixture)) # only in c.zcml
 
+    def test_load_zcml_fixtureapp_with_feature(self):
+        from pyramid_zcml.tests.fixtureapp.models import IFixture
+        config = self._makeOne(autocommit=True)
+        config.load_zcml('pyramid_zcml.tests.fixtureapp:configure.zcml', features=['feature1'])
+        self.failUnless(config.registry.queryUtility(IFixture, name='feature1'))
+        config = self._makeOne(autocommit=True)
+        config.load_zcml('pyramid_zcml.tests.fixtureapp:configure.zcml')
+        self.assertEqual(config.registry.queryUtility(IFixture, name='feature1'), None)
+
     def test_load_zcml_as_relative_filename(self):
         import pyramid_zcml.tests.fixtureapp
         config = self._makeOne(package=pyramid_zcml.tests.fixtureapp,
