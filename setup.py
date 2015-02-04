@@ -24,7 +24,8 @@ except IOError:
     README = CHANGES = ''
 
 install_requires = [
-    'pyramid>=1.4dev', # various b/w compat choices
+    'pyramid>=1.5.0', # various b/w compat choices
+    'venusian>=1.0', # liftid / scope in callbacks
     'zope.configuration>=3.8.0dev', # dict actions
 ]
 
