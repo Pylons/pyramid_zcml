@@ -1,10 +1,10 @@
-``pyramid_zcml``
-================
+pyramid_zcml
+============
 
-``pyramid_zcml`` is a package which provides ZCML (Zope Configuration Markup
+pyramid_zcml is a package which provides ZCML (Zope Configuration Markup
 Language) directives for all "configurator" methods available in the `Pyramid
-<http://docs.pylonsproject.org>`_ web framework.
+<https://trypyramid.com/>`_ web framework.
 
-See `http://docs.pylonsproject.org/projects/pyramid_zcml/dev/
-<http://docs.pylonsproject.org/projects/pyramid_zcml/dev/>`_ for
+See `http://docs.pylonsproject.org/projects/pyramid-zcml/en/latest/
+<http://docs.pylonsproject.org/projects/pyramid-zcml/en/latest/>`_ for
 detailed documentation.
