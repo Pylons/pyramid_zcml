@@ -17,38 +17,9 @@
 # make it absolute, like shown here.
 #sys.path.append(os.path.abspath('some/directory'))
 
-import sys, os
-
-# Add and use Pylons theme
-if 'sphinx-build' in ' '.join(sys.argv): # protect against dumb importers
-    from subprocess import call, Popen, PIPE
-
-    p = Popen('which git', shell=True, stdout=PIPE)
-    git = p.stdout.read().strip()
-    cwd = os.getcwd()
-    _themes = os.path.join(cwd, '_themes')
-
-    if not os.path.isdir(_themes):
-        call([git, 'clone', 'git://github.com/Pylons/pylons_sphinx_theme.git',
-                '_themes'])
-    else:
-        os.chdir(_themes)
-        call([git, 'checkout', 'master'])
-        call([git, 'pull'])
-        os.chdir(cwd)
-
-    sys.path.append(os.path.abspath('_themes'))
-
-    parent = os.path.dirname(os.path.dirname(__file__))
-    sys.path.append(os.path.abspath(parent))
-    wd = os.getcwd()
-    os.chdir(parent)
-    os.system('%s setup.py test -q' % sys.executable)
-    os.chdir(wd)
-
-    for item in os.listdir(parent):
-        if item.endswith('.egg'):
-            sys.path.append(os.path.join(parent, item))
+import datetime
+import pkg_resources
+import pylons_sphinx_themes
 
 # General configuration
 # ---------------------
@@ -76,13 +47,15 @@ master_doc = 'index'
 
 # General substitutions.
 project = 'pyramid_zcml'
-copyright = '2011, Agendaless Consulting <chrism@plope.com>'
+thisyear = datetime.datetime.now().year
+copyright = '2011-%s, Agendaless Consulting <chrism@plope.com>' %thisyear
 
 # The default replacements for |version| and |release|, also used in various
 # other places throughout the built documents.
 #
 # The short X.Y version.
-version = '0.9.2'
+version = pkg_resources.get_distribution('pyramid_zcml').version
+
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -125,10 +98,8 @@ pygments_style = 'sphinx'
 # -----------------------
 
 # Add and use Pylons theme
-sys.path.append(os.path.abspath('_themes'))
-html_theme_path = ['_themes']
 html_theme = 'pyramid'
-
+html_theme_path = pylons_sphinx_themes.get_html_themes_path()
 html_theme_options = {
     'github_url': 'https://github.com/Pylons/pyramid_zcml'
 }
@@ -167,7 +138,7 @@ html_last_updated_fmt = '%b %d, %Y'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
-#html_use_smartypants = True
+html_use_smartypants = False
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
@@ -198,7 +169,7 @@ html_last_updated_fmt = '%b %d, %Y'
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'atemplatedoc'
+htmlhelp_basename = 'pyramid_zcml'
 
 
 # Options for LaTeX output
@@ -215,12 +186,12 @@ htmlhelp_basename = 'atemplatedoc'
 #  author, document class [howto/manual]).
 latex_documents = [
   ('index', 'pyramid_zcml.tex', 'pyramid_zcml Documentation',
-   'Repoze Developers', 'manual'),
+   'Pylons Project Developers', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the
 # top of the title page.
-latex_logo = '.static/logo_hi.gif'
+# latex_logo = '.static/logo_hi.gif'
 
 # For "manual" documents, if this is true, then toplevel headings are
 # parts, not chapters.
