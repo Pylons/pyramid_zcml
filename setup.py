@@ -31,7 +31,12 @@ install_requires = [
 
 tests_require = install_requires + ['pyramid_mako', 'WebTest']
 
-testing_extras = ['pyramid_mako', 'WebTest']
+testing_extras = [
+    'WebTest',
+    'coverage',
+    'nose',
+    'pyramid_mako',
+    ]
 
 docs_extras = ['Sphinx', 'repoze.sphinx.autointerface']
 
