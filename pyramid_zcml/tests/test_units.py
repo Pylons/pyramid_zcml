@@ -632,6 +632,10 @@ class TestAssetDirective(unittest.TestCase):
         return asset(*arg, **kw)
 
     def test_it(self):
+        # This test is extremely fragile because it depends on internal API of
+        # the Pyramid asset_override function. This means that any changes in
+        # that API may cause this test to fail.
+        from pyramid.config.assets import PackageAssetSource
         from pyramid.registry import undefer
         import pyramid_zcml.tests
         context = DummyZCMLContext(self.config)
@@ -647,10 +651,11 @@ class TestAssetDirective(unittest.TestCase):
         discrim = undefer(actions[0]['discriminator'])
         self.assertEqual(action['discriminator'], None)
         action['callable']()
+        L = list(L[0])
         self.assertEqual(
-            L,
-            [(pyramid_zcml.tests, 'fixtures/', pyramid_zcml.tests,
-              'fixtureapp/')])
+            L[:2],
+            [pyramid_zcml.tests, 'fixtures/'])
+        self.assertTrue(isinstance(L[2], PackageAssetSource))
 
 
 class TestRendererDirective(unittest.TestCase):
