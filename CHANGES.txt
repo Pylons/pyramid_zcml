@@ -1,6 +1,12 @@
 Unreleased
 ----------
 
+- Add support for Python 3.5.
+
+- Deprecate support for Python 2.6:  it will be dropped in the next release.
+
+- Drop support for Python 3.2:  testing / packaging tools no longer support it.
+
 - Strengthen the hash algorithm used in ``<authtkauthpolicy>`` directive
   from ``md5`` -> ``sha512``.
 
