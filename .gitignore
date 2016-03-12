@@ -11,3 +11,4 @@ pyramid_zcml/coverage.xml
 *$py.class
 nosetests*.xml
 coverage.xml
+py*-cover.xml
