@@ -38,10 +38,14 @@ testing_extras = [
     'pyramid_mako',
     ]
 
-docs_extras = ['Sphinx', 'repoze.sphinx.autointerface']
+docs_extras = [
+    'pylons-sphinx-themes',
+    'repoze.sphinx.autointerface',
+    'Sphinx >= 1.3.1',
+    ]
 
 setup(name='pyramid_zcml',
-      version='1.0.0',
+      version='1.1.0-dev0',
       description='Zope Config Markup Language support for Pyramid',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
