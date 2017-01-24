@@ -130,7 +130,7 @@ class TestNotFoundDirective(unittest.TestCase):
         from zope.interface import implementedBy
         from pyramid.interfaces import IRequest
         from pyramid.interfaces import IView
-        from pyramid.interfaces import IViewClassifier
+        from pyramid.interfaces import IExceptionViewClassifier
         from pyramid.exceptions import NotFound
         from pyramid.registry import undefer
 
@@ -147,7 +147,7 @@ class TestNotFoundDirective(unittest.TestCase):
         register = actions[0]['callable']
         register()
         derived_view = reg.adapters.lookup(
-            (IViewClassifier, IRequest, implementedBy(NotFound)),
+            (IExceptionViewClassifier, IRequest, implementedBy(NotFound)),
             IView, default=None)
 
         self.assertNotEqual(derived_view, None)
@@ -158,7 +158,7 @@ class TestNotFoundDirective(unittest.TestCase):
         from zope.interface import implementedBy
         from pyramid.interfaces import IRequest
         from pyramid.interfaces import IView
-        from pyramid.interfaces import IViewClassifier
+        from pyramid.interfaces import IExceptionViewClassifier
         from pyramid.exceptions import NotFound
         from pyramid.config import Configurator
         from pyramid.registry import undefer
@@ -179,7 +179,7 @@ class TestNotFoundDirective(unittest.TestCase):
         register = regadapt['callable']
         register()
         derived_view = reg.adapters.lookup(
-            (IViewClassifier, IRequest, implementedBy(NotFound)),
+            (IExceptionViewClassifier, IRequest, implementedBy(NotFound)),
             IView, default=None)
         self.assertNotEqual(derived_view, None)
         self.assertEqual(derived_view(None, None).body, b('OK'))
@@ -200,7 +200,7 @@ class TestForbiddenDirective(unittest.TestCase):
         from zope.interface import implementedBy
         from pyramid.interfaces import IRequest
         from pyramid.interfaces import IView
-        from pyramid.interfaces import IViewClassifier
+        from pyramid.interfaces import IExceptionViewClassifier
         from pyramid.exceptions import Forbidden
         from pyramid.registry import undefer
         reg = self.config.registry
@@ -217,7 +217,7 @@ class TestForbiddenDirective(unittest.TestCase):
         register = actions[0]['callable']
         register()
         derived_view = reg.adapters.lookup(
-            (IViewClassifier, IRequest, implementedBy(Forbidden)),
+            (IExceptionViewClassifier, IRequest, implementedBy(Forbidden)),
             IView, default=None)
 
         self.assertNotEqual(derived_view, None)
@@ -228,7 +228,7 @@ class TestForbiddenDirective(unittest.TestCase):
         from zope.interface import implementedBy
         from pyramid.interfaces import IRequest
         from pyramid.interfaces import IView
-        from pyramid.interfaces import IViewClassifier
+        from pyramid.interfaces import IExceptionViewClassifier
         from pyramid.exceptions import Forbidden
         from pyramid.config import Configurator
         from pyramid.registry import undefer
@@ -249,7 +249,7 @@ class TestForbiddenDirective(unittest.TestCase):
         register = regadapt['callable']
         register()
         derived_view = reg.adapters.lookup(
-            (IViewClassifier, IRequest, implementedBy(Forbidden)),
+            (IExceptionViewClassifier, IRequest, implementedBy(Forbidden)),
             IView, default=None)
         self.assertNotEqual(derived_view, None)
         self.assertEqual(derived_view(None, None).body, b('OK'))
