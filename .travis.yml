@@ -2,26 +2,30 @@
 language: python
 sudo: false
 
-python:
-    - "2.6"
-    - "2.7"
-    - "3.3"
-    - "3.4"
-    - "3.5"
-    - "3.6"
-    - "pypy"
-    - "pypy3"
-
 matrix:
-    include:
-    - python: "2.7"
-      env: TOXENV=cover
+  include:
+    - python: 2.6
+    - python: 2.7
+    - python: 3.4
+    - python: 3.5
+    - python: 3.6
+    - python: pypy
+    - python: pypy3
+    - python: nightly
+    - python: 3.5
+      env: TOXENV=py2-cover,py3-cover,coverage
+  allow_failures:
+    - python: nightly
 
 install:
   - travis_retry pip install tox-travis
 
 script:
   - travis_retry tox
+
+cache:
+  directories:
+    - $HOME/.cache/pip
 
 notifications:
   email:
