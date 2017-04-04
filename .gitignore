@@ -2,10 +2,10 @@ env26/
 *.egg
 *.egg-info
 *.pyc
-.coverage
+.coverage*
 dist/
 build/
 .tox/
 nosetests.xml
-pyramid_zcml/coverage.xml
+pyramid_zcml/coverage*.xml
 *$py.class
