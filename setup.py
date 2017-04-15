@@ -26,7 +26,7 @@ except IOError:
 install_requires = [
     'pyramid>=1.5.0', # various b/w compat choices
     'venusian>=1.0', # liftid / scope in callbacks
-    'zope.configuration>=3.8.0dev', # dict actions
+    'zope.configuration>=3.8.0', # dict actions
 ]
 
 tests_require = install_requires + ['pyramid_mako', 'WebTest']
@@ -43,7 +43,7 @@ docs_extras = [
     ]
 
 setup(name='pyramid_zcml',
-      version='1.1.0-dev0',
+      version='1.1.0',
       description='Zope Config Markup Language support for Pyramid',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
