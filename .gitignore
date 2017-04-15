@@ -1,10 +1,14 @@
+/bin/
+/build/
+/dist/
+/include/
+/lib/
+/pip-selfcheck.json
 env26/
 *.egg
 *.egg-info
 *.pyc
 .coverage*
-dist/
-build/
 .tox/
 nosetests.xml
 pyramid_zcml/coverage*.xml
