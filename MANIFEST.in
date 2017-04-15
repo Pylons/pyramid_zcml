@@ -1,0 +1,5 @@
+include CHANGES.txt *.ini *.rst
+recursive-include pyramid_zcml *.zcml
+recursive-include pyramid_zcml/tests *.html *.mak *.pt
+recursive-include pyramid_zcml/tests/localeapp/locale *
+recursive-include pyramid_zcml/scaffolds *_tmpl *.ico *.png *.css *.gif *.py
