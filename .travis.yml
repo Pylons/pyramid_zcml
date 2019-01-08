@@ -12,7 +12,7 @@ matrix:
           env: TOXENV=py35
         - python: pypy
           env: TOXENV=pypy
-        - python: 3.5
+        - python: 3.6
           env: TOXENV=py2-cover,py3-cover,coverage
         - python: 3.6
           env: TOXENV=py36
