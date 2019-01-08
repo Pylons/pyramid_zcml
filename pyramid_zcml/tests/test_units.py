@@ -1227,7 +1227,7 @@ class DummyFactory(object):
         """ """
         
 class DummyModule:
-    __path__ = "foo"
+    __path__ = ["foo"]
     __name__ = "dummy"
     __file__ = ''
     scanned = False
