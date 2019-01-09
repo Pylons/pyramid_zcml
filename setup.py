@@ -43,7 +43,7 @@ docs_extras = [
     ]
 
 setup(name='pyramid_zcml',
-      version='1.2.0',
+      version='1.2.1.dev0',
       description='Zope Config Markup Language support for Pyramid',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
