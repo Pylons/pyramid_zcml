@@ -1080,7 +1080,7 @@ See :ref:`adding_a_renderer` for more information for the definition of a
 
 Adding the above ZCML to your application will allow you to use the
 ``my.package.MyAMFRenderer`` renderer factory implementation in view
-configurations by subseqently referring to it as ``amf`` in the ``renderer``
+configurations by subsequently referring to it as ``amf`` in the ``renderer``
 attribute of a :term:`view configuration`:
 
 .. code-block:: xml
