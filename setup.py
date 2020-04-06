@@ -32,8 +32,10 @@ install_requires = [
 tests_require = install_requires + ['pyramid_mako', 'WebTest']
 
 testing_extras = [
+    'coverage',
     'WebTest',
     'nose',
+    'nosexcover',
     'pyramid_mako']
 
 docs_extras = [
@@ -43,19 +45,17 @@ docs_extras = [
     ]
 
 setup(name='pyramid_zcml',
-      version='1.2.1.dev0',
+      version='2.0.0.dev0',
       description='Zope Config Markup Language support for Pyramid',
       long_description=README + '\n\n' +  CHANGES,
       classifiers=[
         "Intended Audience :: Developers",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
         "Framework :: Pylons",
@@ -78,6 +78,7 @@ setup(name='pyramid_zcml',
           'testing': testing_extras,
           'docs': docs_extras,
           },
+      python_requires='>=3.5',
       entry_points = """
       [paste.paster_create_template]
       pyramid_starter_zcml=pyramid_zcml.scaffolds:StarterZCMLProjectTemplate
