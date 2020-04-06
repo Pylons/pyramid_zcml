@@ -7,7 +7,7 @@ Glossary
    :sorted:
 
    Pyramid
-      A `web framework <http://pylonshq.com/pyramid>`_.
+      A `web framework <https://trypyramid.com>`_.
 
    View handler
      A view handler ties together
@@ -17,7 +17,7 @@ Glossary
      using :term:`url dispatch`.  See also :ref:`views_chapter`.
 
    Pylons
-     `A lightweight Python web framework <http://pylonshq.com>`_.
+     `A lightweight Python web framework <https://pylonsproject.org/about-pylons-framework.html>`_.
 
    URL dispatch
      An alternative to :term:`traversal` as a mechanism for locating a a
@@ -27,7 +27,7 @@ Glossary
 
    ZCML
      `Zope Configuration Markup Language
-     <http://www.muthukadan.net/docs/zca.html#zcml>`_, an XML dialect
+     <https://muthukadan.net/docs/zca.html#zcml>`_, an XML dialect
      used by Zope and Pyramid for configuration tasks.  ZCML
      is capable of performing different types of :term:`configuration
      declaration`, but its primary purpose in Pyramid is to
@@ -121,13 +121,6 @@ Glossary
      Any file contained within a Python :term:`package` which is *not*
      a Python source code file.
 
-   asset specification
-     A colon-delimited identifier for an :term:`asset`.  The colon separates
-     a Python :term:`package` name from a package subpath.  For example, the
-     asset specification ``my.package:static/baz.css`` identifies the file
-     named ``baz.css`` in the ``static`` subdirectory of the ``my.package``
-     Python :term:`package`.  See :ref:`asset_specifications` for more info.
-
    package
      A directory on disk which contains an ``__init__.py`` file, making
      it recognizable to Python as a location which can be ``import`` -ed.
@@ -174,7 +167,7 @@ Glossary
      or class as its first argument and which returns an arbitrary object.
      Pyramid provides several decorators, used for configuration and return
      value modification purposes.  See also `PEP 318
-     <http://www.python.org/dev/peps/pep-0318/>`_.
+     <https://www.python.org/dev/peps/pep-0318/>`_.
 
    router
      The :term:`WSGI` application created when you start a
@@ -184,8 +177,8 @@ Glossary
      Pyramid application.
 
    WSGI
-     `Web Server Gateway Interface <http://wsgi.org/>`_.  This is a
-     Python standard for connecting web applications to web servers,
+     `Web Server Gateway Interface <https://wsgi.readthedocs.io/en/latest/>`_.
+     This is a Python standard for connecting web applications to web servers,
      similar to the concept of Java Servlets.  Pyramid requires
      that your application be served as a WSGI application.
 
@@ -218,7 +211,7 @@ Glossary
 
    Zope Component Architecture
      The `Zope Component Architecture
-     <http://www.muthukadan.net/docs/zca.html>`_ (aka ZCA) is a system
+     <https://muthukadan.net/docs/zca.html>`_ (aka ZCA) is a system
      which allows for application pluggability and complex dispatching
      based on objects which implement an :term:`interface`.
      Pyramid uses the ZCA "under the hood" to perform view
