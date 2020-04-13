@@ -1,0 +1,17 @@
+[run]
+source =
+    pyramid_zcml
+omit = pyramid_zcml/pyramid_zcml_tests_viewdecoratorapp_views_templates_foo_mak
+
+[paths]
+source =
+    pyramid_zcml
+    */site-packages/pyramid_zcml
+
+[xml]
+output = coverage-py3.xml
+
+[report]
+show_missing = true
+precision = 2
+fail_under = 100

@@ -1430,7 +1430,13 @@ See :ref:`changing_the_request_factory` for more information.
 Changing the Renderer Globals Factory via ZCML
 ----------------------------------------------
 
-A renderer globals factory can be registered via ZCML as a through the use of
+.. warning::
+
+    The (internal) ``pyramid.interfaces.IRendererGlobals`` interface was removed in Pyramid 1.5a2.
+    These arguments, methods and interfaces had been deprecated since 1.1.
+    Use a ``BeforeRender`` event subscriber as documented in :ref:`beforerender_event` in the "Hooks" chapter of the Pyramid narrative documentation instead of providing renderer globals values to the configurator.
+
+A renderer globals factory can be registered via ZCML through the use of
 the ZCML ``utility`` directive.  In the below, we assume a
 ``renderers_globals_factory`` function lives in a package named
 ``mypackage.mymodule``.
@@ -1442,8 +1448,6 @@ the ZCML ``utility`` directive.  In the below, we assume a
       component="mypackage.mymodule.renderer_globals_factory"
       provides="pyramid.interfaces.IRendererGlobalsFactory"
     />
-
-See :ref:`adding_renderer_globals` for more information.
 
 .. index::
    single: Zope ZCML directives

@@ -69,17 +69,17 @@ are all completely equivalent:
 
         <include package="pyramid.includes" />
 
-        <view xmlns="http://pylonshq.com/pyramid"
+        <view xmlns="https://trypyramid.com"
            view="helloworld.hello_world"
            />
 
       </configure>
 
 For more information about XML namespaces, see `this older, but simple
-XML.com article <http://www.xml.com/pub/a/1999/01/namespaces.html>`_.
+XML.com article <https://www.xml.com/pub/a/1999/01/namespaces.html>`_.
 
 The conventions in this document assume that the default XML namespace
-is ``http://pylonshq.com/pyramid``.
+is ``https://trypyramid.com``.
 
 Alternatives
 ~~~~~~~~~~~~

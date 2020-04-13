@@ -73,10 +73,10 @@ Directives and API
 Reporting Bugs / Development Versions
 -------------------------------------
 
-Visit http://github.com/Pylons/pyramid_zcml to download development or
+Visit https://github.com/Pylons/pyramid_zcml to download development or
 tagged versions.
 
-Visit http://github.com/Pylons/pyramid_zcml/issues to report bugs.
+Visit https://github.com/Pylons/pyramid_zcml/issues to report bugs.
 
 Indices and tables
 ------------------
