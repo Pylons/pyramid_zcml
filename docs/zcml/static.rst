@@ -35,7 +35,7 @@ Attributes
   ``__no_permission_required__``.  The ``__no_permission_required__``
   string is a special sentinel which indicates that, even if a
   :term:`default permission` exists for the current application, the
-  static view should be renderered to completely anonymous users.
+  static view should be rendered to completely anonymous users.
   This default value is permissive because, in most web apps, static
   resources seldom need protection from viewing.  You should use this
   option only if you register a static view which points at a
