@@ -566,7 +566,7 @@ A combination of imperative configuration, declarative configuration via ZCML
 and scanning can be used to configure any application.  They are not mutually
 exclusive.
 
-Declarative configuraton was the more traditional form of configuration used
+Declarative configuration was the more traditional form of configuration used
 in Pyramid applications; the first releases of Pyramid and all releases of
 Pyramid's predecessor named repoze.bfg included ZCML in the core.  However,
 by virtue of this package, it has been externalized from the Pyramid core
